@@ -10,6 +10,20 @@ Spring Boot + MySQL backend for recording daily drinks, who paid, weekly Saturda
 
 The API starts at `http://localhost:8081/api`. The React Vite dev server at `http://localhost:5173` is allowed by default. Schema migrations run automatically through Flyway.
 
+## Deploy without CORS errors
+
+The frontend can be deployed in either of these ways:
+
+1. **Same domain:** publish the API behind `/api` on the same domain as the frontend. The production frontend uses `/api` automatically, so the browser makes no cross-origin request.
+2. **Separate domains:** set these two build/runtime variables with your real HTTPS domains (do not add a trailing slash):
+
+```text
+VITE_API_URL=https://api.example.com/api
+CORS_ALLOWED_ORIGINS=https://app.example.com,https://www.app.example.com
+```
+
+`CORS_ALLOWED_ORIGINS` is an exact, comma-separated allow-list. Do not use `*`, because the API accepts authenticated requests. Restart the backend after changing it, and rebuild the frontend after changing `VITE_API_URL`.
+
 ## Main routes
 
 - `GET/POST/PUT /api/members`

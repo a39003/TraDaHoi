@@ -1,4 +1,11 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081/api';
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+
+// In production, a reverse proxy can expose the API under the same domain as
+// the website. That path has no cross-origin request at all. For a separate
+// backend domain, set VITE_API_URL when building the frontend.
+export const API_BASE_URL = (configuredApiUrl
+  || (import.meta.env.DEV ? 'http://localhost:8081/api' : '/api'))
+  .replace(/\/$/, '');
 
 export async function api(path, options = {}) {
   const isFormData = options.body instanceof FormData;

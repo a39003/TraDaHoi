@@ -1,0 +1,70 @@
+services:
+  # MySQL stays private inside Render's network. Its disk is required because
+  # MySQL data would otherwise disappear after a redeploy or restart.
+  - type: pserv
+    name: tra-da-mysql
+    runtime: docker
+    region: singapore
+    plan: 0.5c-512mb
+    dockerfilePath: ./infra/mysql/Dockerfile
+    dockerContext: ./infra/mysql
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_DATABASE
+        value: tea_attendance
+      - key: MYSQL_USER
+        value: tra_da_app
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_ROOT_PASSWORD
+        sync: false
+
+  # Spring Boot API. Keep this service on a non-sleeping plan so the Saturday
+  # settlement scheduler and chat notifications can run reliably.
+  - type: web
+    name: tra-da-api
+    runtime: docker
+    region: singapore
+    plan: 0.5c-512mb
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    disk:
+      name: chat-media
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: tra-da-mysql
+          property: host
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: tea_attendance
+      - key: DB_USERNAME
+        value: tra_da_app
+      - key: DB_PASSWORD
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CHAT_MEDIA_STORAGE_PATH
+        value: /var/data/chat
+      - key: APP_SCHEDULER_ENABLED
+        value: "true"
+
+  # React/Vite client. Render will ask for the public API URL when the
+  # Blueprint is first created, for example https://tra-da-api.onrender.com/api.
+  - type: web
+    name: tra-da-web
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    rootDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        sync: false
