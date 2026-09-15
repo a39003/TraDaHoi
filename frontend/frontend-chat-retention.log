@@ -1,0 +1,51 @@
+
+> tra-da-weekly-frontend@0.1.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+
+  VITE v5.4.10  ready in 5184 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+9:41:40 AM [vite] page reload src/api.js
+9:41:40 AM [vite] page reload src/api.js
+9:44:45 AM [vite] page reload src/ChatPanel.jsx
+9:45:46 AM [vite] page reload src/App.jsx
+9:46:47 AM [vite] page reload src/App.jsx
+9:47:43 AM [vite] hmr update /src/styles.css
+9:47:54 AM [vite] hmr update /src/styles.css
+9:48:45 AM [vite] hmr update /src/styles.css
+9:49:08 AM [vite] page reload src/AdminConsole.jsx
+9:49:45 AM [vite] page reload src/api.js
+9:58:10 AM [vite] hmr update /src/styles.css
+10:21:13 AM [vite] page reload src/App.jsx
+10:21:54 AM [vite] page reload src/App.jsx
+10:22:36 AM [vite] page reload src/App.jsx
+10:22:54 AM [vite] page reload src/ChatPanel.jsx
+10:23:56 AM [vite] page reload src/AdminConsole.jsx
+10:24:10 AM [vite] hmr update /src/styles.css
+1:48:52 PM [vite] page reload src/api.js
+1:49:16 PM [vite] page reload src/App.jsx
+1:50:05 PM [vite] page reload src/App.jsx
+1:50:33 PM [vite] hmr update /src/styles.css
+1:55:13 PM [vite] page reload src/ChatPanel.jsx
+2:05:27 PM [vite] page reload src/api.js
+2:05:33 PM [vite] page reload src/App.jsx
+2:06:11 PM [vite] page reload src/AdminConsole.jsx
+2:07:07 PM [vite] page reload src/App.jsx
+2:08:10 PM [vite] page reload src/ChatPanel.jsx
+2:08:42 PM [vite] hmr update /src/styles.css
+2:09:02 PM [vite] hmr update /src/styles.css
+2:09:24 PM [vite] page reload src/App.jsx
+2:09:49 PM [vite] page reload src/ChatPanel.jsx
+2:29:10 PM [vite] page reload src/api.js
+2:29:10 PM [vite] page reload src/api.js
+3:06:17 PM [vite] page reload src/ProfileView.jsx
+3:06:17 PM [vite] page reload src/ProfileView.jsx
+3:06:23 PM [vite] page reload src/AdminConsole.jsx
+3:06:28 PM [vite] page reload src/ChatPanel.jsx
+3:06:32 PM [vite] page reload src/App.jsx
+3:06:35 PM [vite] hmr update /src/styles.css
+3:19:45 PM [vite] page reload src/ProfileView.jsx
+3:19:51 PM [vite] page reload src/AdminConsole.jsx
+3:19:58 PM [vite] page reload src/ChatPanel.jsx
+3:20:06 PM [vite] hmr update /src/styles.css

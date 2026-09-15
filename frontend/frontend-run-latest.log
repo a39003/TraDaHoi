@@ -1,0 +1,24 @@
+
+> tra-da-weekly-frontend@0.1.0 dev
+> vite --host 127.0.0.1 --force
+
+Forced re-optimization of dependencies
+
+  VITE v5.4.10  ready in 1080 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+  ➜  press h + enter to show help
+11:46:51 PM [vite] hmr update /src/styles.css
+11:46:51 PM [vite] hmr update /src/styles.css
+12:02:13 AM [vite] page reload src/api.js
+12:02:13 AM [vite] Pre-transform error: Failed to load url /src/api.js (resolved id: D:/web_diem_danh_tra_da/frontend/src/api.js) in D:/web_diem_danh_tra_da/frontend/src/App.jsx. Does the file exist?
+12:02:13 AM [vite] Pre-transform error: Failed to load url /src/api.js (resolved id: D:/web_diem_danh_tra_da/frontend/src/api.js) in D:/web_diem_danh_tra_da/frontend/src/App.jsx. Does the file exist?
+12:02:43 AM [vite] page reload src/api.js
+12:05:32 AM [vite] page reload src/ProfileView.jsx
+12:05:33 AM [vite] Pre-transform error: Failed to load url /src/ProfileView.jsx (resolved id: D:/web_diem_danh_tra_da/frontend/src/ProfileView.jsx) in D:/web_diem_danh_tra_da/frontend/src/App.jsx. Does the file exist?
+12:06:00 AM [vite] page reload src/ProfileView.jsx
+12:06:28 AM [vite] page reload src/App.jsx
+12:06:28 AM [vite] Pre-transform error: Failed to load url /src/App.jsx (resolved id: D:/web_diem_danh_tra_da/frontend/src/App.jsx) in D:/web_diem_danh_tra_da/frontend/src/main.jsx. Does the file exist?
+12:08:08 AM [vite] page reload src/App.jsx
+12:08:21 AM [vite] hmr update /src/styles.css
+12:10:45 AM [vite] hmr update /src/styles.css

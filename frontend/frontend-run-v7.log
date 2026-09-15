@@ -1,0 +1,17 @@
+
+> tra-da-weekly-frontend@0.1.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+
+  VITE v5.4.10  ready in 2239 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+12:18:36 AM [vite] page reload src/AdminConsole.jsx
+12:34:33 AM [vite] page reload src/AdminConsole.jsx
+12:36:05 AM [vite] page reload src/AdminConsole.jsx
+12:37:18 AM [vite] hmr update /src/styles.css
+12:37:42 AM [vite] hmr update /src/styles.css
+12:52:44 AM [vite] page reload src/api.js
+12:52:52 AM [vite] page reload src/ChatPanel.jsx
+12:54:15 AM [vite] page reload src/ChatPanel.jsx
+12:54:33 AM [vite] hmr update /src/styles.css

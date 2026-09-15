@@ -1,0 +1,9 @@
+
+> tra-da-weekly-frontend@0.1.0 dev
+> vite --host 127.0.0.1
+
+Port 5173 is in use, trying another one...
+
+  VITE v5.4.10  ready in 2947 ms
+
+  ➜  Local:   http://127.0.0.1:5174/

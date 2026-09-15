@@ -1,0 +1,1 @@
+ALTER TABLE members ADD COLUMN avatar_url VARCHAR(500) NULL;

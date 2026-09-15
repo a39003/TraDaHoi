@@ -1,0 +1,23 @@
+
+> tra-da-weekly-frontend@0.1.0 dev
+> vite --host 127.0.0.1
+
+
+  VITE v5.4.10  ready in 3239 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+  ➜  press h + enter to show help
+10:31:17 PM [vite] page reload src/App.jsx
+10:32:08 PM [vite] hmr update /src/styles.css
+10:41:06 PM [vite] page reload src/main.jsx
+10:41:09 PM [vite] hmr update /src/styles.css
+10:45:14 PM [vite] page reload src/main.jsx
+10:48:57 PM [vite] page reload src/main.jsx
+10:49:06 PM [vite] page reload src/App.jsx
+11:16:58 PM [vite] page reload src/api.js
+11:17:23 PM [vite] page reload src/App.jsx
+11:17:59 PM [vite] page reload src/App.jsx
+11:18:57 PM [vite] page reload src/App.jsx
+11:33:11 PM [vite] page reload src/ProfileView.jsx
+11:34:25 PM [vite] page reload src/ProfileView.jsx
+11:34:31 PM [vite] hmr update /src/styles.css

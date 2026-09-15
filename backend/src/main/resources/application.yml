@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: tea-attendance-api
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/${DB_NAME:tea_attendance}?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Ho_Chi_Minh
+    username: ${DB_USERNAME:tra_da_app}
+    password: ${DB_PASSWORD:tra_da_secret}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000}
+  scheduler:
+    enabled: ${APP_SCHEDULER_ENABLED:true}
+  seed:
+    enabled: ${APP_SEED_ENABLED:true}
+  chat-media:
+    storage-path: ${CHAT_MEDIA_STORAGE_PATH:uploads/chat}
+    max-total-storage-bytes: ${CHAT_MEDIA_MAX_TOTAL_BYTES:1073741824}
+  chat:
+    retention-months: ${CHAT_RETENTION_MONTHS:6}
+    cleanup-cron: "${CHAT_CLEANUP_CRON:0 15 3 * * *}"
