@@ -1300,3 +1300,3203 @@ Unconditional classes:
 2026-09-15T13:55:03.107+07:00 DEBUG 20648 --- [tea-attendance-api] [nio-8081-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 2026-09-15T13:55:03.109+07:00 DEBUG 20648 --- [tea-attendance-api] [nio-8081-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{time=2026-09-15T06:55:03.104957500Z, status=ok}]
 2026-09-15T13:55:03.110+07:00 DEBUG 20648 --- [tea-attendance-api] [nio-8081-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2026-09-15T13:55:36.605+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-2] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 4, active threads = 1, queued tasks = 2, completed tasks = 1]
+2026-09-15T13:56:00.024+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T13:57:00.022+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T13:58:00.014+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T13:59:00.022+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:00:00.030+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:01:00.028+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:02:00.060+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:03:00.107+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:04:00.096+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:05:00.078+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:06:00.052+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:07:00.094+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:08:00.042+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:09:00.078+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:10:00.173+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:11:00.166+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:12:00.023+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:13:00.042+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:14:00.195+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:15:00.243+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:16:00.031+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:17:00.039+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:18:00.089+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:19:00.092+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:20:00.038+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:21:00.091+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:22:00.034+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:23:00.020+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:24:00.015+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:25:00.011+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:25:36.642+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-8] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 32]
+2026-09-15T14:26:00.015+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:27:00.018+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:28:00.024+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:29:00.013+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:30:00.022+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:31:00.037+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:32:00.014+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:33:00.115+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:34:00.045+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:35:00.022+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:36:00.035+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:37:00.093+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:38:00.046+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:39:00.018+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:40:00.021+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:41:00.033+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:42:00.031+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:43:00.032+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:44:00.016+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:45:00.187+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:46:00.574+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:47:00.120+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:48:00.235+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:49:00.551+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:50:00.102+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:51:00.440+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:52:00.226+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:53:00.037+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:54:00.286+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:55:00.076+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:55:36.814+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-7] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 63]
+2026-09-15T14:56:00.141+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:57:00.206+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:58:00.195+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T14:59:00.055+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:00:00.046+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:01:00.090+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:02:00.063+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:03:00.339+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:04:00.076+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:05:00.115+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:06:00.305+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:07:00.135+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:08:00.086+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:09:00.201+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:10:00.147+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:11:00.079+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:12:00.244+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:13:00.064+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:14:00.049+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:15:00.073+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:16:00.021+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:17:00.040+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:18:00.037+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:19:00.081+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:20:00.384+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:21:00.331+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:22:00.462+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:23:00.077+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:24:00.036+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:25:00.058+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:25:36.868+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-4] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 94]
+2026-09-15T15:26:00.093+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:27:00.090+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:28:00.048+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:29:00.087+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:30:00.143+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:31:00.117+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:32:00.073+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:33:00.065+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:34:00.149+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:35:00.091+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:36:00.080+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:37:00.032+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:38:00.087+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:39:00.029+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:40:02.118+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:41:00.357+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:42:00.719+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:43:00.040+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:44:00.038+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:45:00.052+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:46:00.138+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:47:00.077+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:48:00.205+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:49:00.118+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:50:00.042+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:51:00.037+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:52:00.046+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:53:00.075+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:54:00.036+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:55:00.087+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:55:36.920+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-3] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 125]
+2026-09-15T15:56:00.668+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:57:00.217+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:58:00.996+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T15:59:00.321+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:00:00.303+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:01:00.541+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-1] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:02:00.134+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:03:00.184+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:04:00.132+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:05:00.031+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:06:00.350+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:07:00.113+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:08:00.210+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:09:00.044+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:10:00.106+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:11:00.087+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:12:00.081+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:13:00.232+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:14:00.321+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:15:00.140+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:16:00.137+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:17:00.031+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:18:00.118+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-4] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:19:00.052+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:20:00.085+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-3] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:21:00.056+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:22:00.100+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:23:00.110+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:24:00.024+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:25:00.037+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:25:36.966+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-8] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 156]
+2026-09-15T16:26:00.066+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:27:00.087+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:28:00.049+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:29:00.406+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:30:00.585+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:31:00.145+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:32:00.033+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-7] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:33:01.259+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:34:00.121+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:35:00.507+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:36:00.062+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:37:00.206+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:38:00.193+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:39:00.033+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:40:00.065+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:41:00.094+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:42:00.151+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:43:00.059+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:44:00.274+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:45:00.139+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:46:00.069+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:47:00.144+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:48:00.103+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:49:00.040+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:50:00.051+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:51:00.369+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:52:00.102+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:53:00.030+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:54:00.040+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:55:00.076+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:55:37.013+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-4] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 187]
+2026-09-15T16:56:00.066+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:57:00.059+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:58:00.057+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T16:59:00.142+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:00:00.128+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:01:00.112+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:02:00.047+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:03:00.117+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:04:00.149+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:05:00.084+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:06:00.104+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:07:00.050+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:08:00.024+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:09:00.168+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:10:00.229+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:11:00.120+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:12:00.081+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:13:00.101+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:14:00.040+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:15:00.049+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:16:00.046+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:17:00.042+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:18:00.042+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:19:00.129+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:20:00.084+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:21:00.447+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:22:00.265+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:23:00.072+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:24:00.033+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:25:00.046+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-2] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:25:37.073+07:00  INFO 20648 --- [tea-attendance-api] [MessageBroker-5] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 218]
+2026-09-15T17:26:00.304+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:27:00.282+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:28:00.314+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:29:00.031+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:30:00.035+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:31:00.045+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:32:00.038+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:33:00.032+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:34:00.043+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:35:00.059+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:36:00.034+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:37:00.033+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:38:00.140+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-8] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:39:00.216+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-6] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:40:00.126+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:41:00.164+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:42:00.626+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?
+2026-09-15T17:43:00.319+07:00 DEBUG 20648 --- [tea-attendance-api] [MessageBroker-5] org.hibernate.SQL                        : 
+    select
+        wns1_0.id,
+        wns1_0.creditor_body,
+        wns1_0.creditor_title,
+        wns1_0.debtor_body,
+        wns1_0.debtor_title,
+        wns1_0.send_day,
+        wns1_0.send_time,
+        wns1_0.updated_at 
+    from
+        weekly_notification_settings wns1_0 
+    where
+        wns1_0.id=?

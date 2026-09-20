@@ -1,66 +1,35 @@
 services:
-  # MySQL stays private inside Render's network. Its disk is required because
-  # MySQL data would otherwise disappear after a redeploy or restart.
-  - type: pserv
-    name: tra-da-mysql
-    runtime: docker
-    region: singapore
-    plan: 0.5c-512mb
-    dockerfilePath: ./infra/mysql/Dockerfile
-    dockerContext: ./infra/mysql
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 10
-    envVars:
-      - key: MYSQL_DATABASE
-        value: tea_attendance
-      - key: MYSQL_USER
-        value: tra_da_app
-      - key: MYSQL_PASSWORD
-        sync: false
-      - key: MYSQL_ROOT_PASSWORD
-        sync: false
-
-  # Spring Boot API. Keep this service on a non-sleeping plan so the Saturday
-  # settlement scheduler and chat notifications can run reliably.
+  # Free demo/test deployment using Aiven for MySQL's free tier over TLS.
   - type: web
-    name: tra-da-api
+    name: tra-da-api-free
     runtime: docker
     region: singapore
-    plan: 0.5c-512mb
+    plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /api/health
-    disk:
-      name: chat-media
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: DB_HOST
-        fromService:
-          type: pserv
-          name: tra-da-mysql
-          property: host
+        sync: false
       - key: DB_PORT
-        value: "3306"
+        sync: false
       - key: DB_NAME
-        value: tea_attendance
+        sync: false
       - key: DB_USERNAME
-        value: tra_da_app
+        sync: false
       - key: DB_PASSWORD
         sync: false
+      - key: DB_SSL_MODE
+        value: REQUIRED
+      - key: DB_CREATE_IF_NOT_EXIST
+        value: "false"
       - key: CORS_ALLOWED_ORIGINS
         sync: false
-      - key: CHAT_MEDIA_STORAGE_PATH
-        value: /var/data/chat
       - key: APP_SCHEDULER_ENABLED
         value: "true"
 
-  # React/Vite client. Render will ask for the public API URL when the
-  # Blueprint is first created, for example https://tra-da-api.onrender.com/api.
   - type: web
-    name: tra-da-web
+    name: tra-da-web-free
     runtime: static
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist

@@ -5,7 +5,7 @@ spring:
   application:
     name: tea-attendance-api
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/${DB_NAME:tea_attendance}?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Ho_Chi_Minh
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/${DB_NAME:tea_attendance}?createDatabaseIfNotExist=${DB_CREATE_IF_NOT_EXIST:true}&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Ho_Chi_Minh&sslMode=${DB_SSL_MODE:DISABLED}
     username: ${DB_USERNAME:tra_da_app}
     password: ${DB_PASSWORD:tra_da_secret}
   jpa:

@@ -113,6 +113,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState('');
+  const lastAlertUnreadCount = useRef(0);
   const [calendarMonth, setCalendarMonth] = useState(monthValue);
   const weekStart = monday();
   const weekEnd = useMemo(() => {
@@ -131,6 +132,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       ]);
       setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData);
       setMessages(chatData); setNotifications(notificationData); setChatUnreadCount(chatUnread.unreadCount || 0);
+      lastAlertUnreadCount.current = chatUnread.unreadCount || 0;
       setSettlement(settlementData);
     } catch (error) { setNotice(error.message || 'Không tải được dữ liệu từ máy chủ.'); }
     finally { setLoading(false); }
@@ -138,10 +140,22 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
 
   const refreshAlerts = useCallback(async () => {
     try {
-      const [chatData, notificationData, chatUnread] = await Promise.all([
-        teaApi.getMessages(), teaApi.getNotifications(), teaApi.getChatUnread(),
+      const [notificationData, chatUnread] = await Promise.all([
+        teaApi.getNotifications(), teaApi.getChatUnread(),
       ]);
-      setMessages(chatData); setNotifications(notificationData); setChatUnreadCount(chatUnread.unreadCount || 0);
+      const unreadCount = chatUnread.unreadCount || 0;
+      setNotifications(notificationData); setChatUnreadCount(unreadCount);
+
+      // Only fetch message previews for the notification bell when a new chat
+      // notification actually arrives. Previously this downloaded 50 messages
+      // every five seconds even while the chat screen was closed.
+      if (unreadCount > lastAlertUnreadCount.current) {
+        const latestMessages = await teaApi.getMessages({ limit: 6 });
+        setMessages((current) => [...new Map([...current, ...latestMessages].map((message) => [message.id, message])).values()]
+          .sort((first, second) => new Date(first.createdAt) - new Date(second.createdAt))
+          .slice(-50));
+      }
+      lastAlertUnreadCount.current = unreadCount;
     } catch {
       // Giữ dữ liệu hiện tại nếu lần kiểm tra thông báo nền bị gián đoạn.
     }
@@ -149,15 +163,41 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
 
   const refreshChat = useCallback(async () => {
     try {
-      const [chatData, chatUnread] = await Promise.all([
-        teaApi.getMessages(), teaApi.getChatUnread(),
-      ]);
+      const chatData = await teaApi.getMessages();
       setMessages(chatData);
-      setChatUnreadCount(chatUnread.unreadCount || 0);
     } catch {
       // Keep the current messages when a background refresh is interrupted.
     }
   }, [user.id]);
+
+  const refreshSettlement = useCallback(async () => {
+    try {
+      setSettlement(await teaApi.calculateWeekSettlement(weekStart));
+    } catch {
+      // Keep the current settlement when a background refresh is interrupted.
+    }
+  }, [weekStart]);
+
+  const applyAttendanceChange = useCallback((change) => {
+    if (change?.type === 'delete') {
+      setExpenses((current) => current.filter((expense) => expense.id !== change.id));
+    } else if (change?.expense) {
+      setExpenses((current) => [...current.filter((expense) => expense.id !== change.expense.id), change.expense]
+        .sort((first, second) => String(first.orderDate).localeCompare(String(second.orderDate))));
+    }
+    void refreshSettlement();
+  }, [refreshSettlement]);
+
+  const applyAdminChange = useCallback((change) => {
+    if (!change) return;
+    const updateList = (setter) => {
+      setter((current) => change.type === 'delete'
+        ? current.filter((item) => item.id !== change.id)
+        : [...current.filter((item) => item.id !== change.item.id), change.item]);
+    };
+    if (change.kind === 'drink') updateList(setDrinks);
+    if (change.kind === 'member') updateList(setMembers);
+  }, []);
 
   const mergeLiveMessage = useCallback((message) => {
     if (!message?.id) return;
@@ -211,12 +251,15 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     <main className="app-main">
       <header className="app-header"><div><p className="eyebrow">NHÓM TRÀ ĐÁ</p><h1>{titles[view]}</h1></div><NotificationBell user={user} messages={messages} notifications={notifications} chatUnreadCount={chatUnreadCount} chatOpen={view === 'chat'} onOpenChat={() => setView('chat')} onRefresh={refreshAlerts} /></header>
       {loading ? <p className="loading">Đang tải dữ liệu...</p> : <>
-        {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={load} flash={flash} />}
+        {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={applyAttendanceChange} flash={flash} />}
         {view === 'week' && <MonthCalendar records={visibleRecords} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} />}
         {view === 'settlement' && <SettlementView balances={balances} settlement={settlement} user={user} weekStart={weekStart} weekEnd={settlement?.weekEnd || weekEnd} isAdmin={isAdmin} />}
-        {view === 'chat' && <ChatPanel user={user} members={activeMembers} messages={messages} notifications={notifications} onSaved={load} onRefreshChat={refreshChat} onMessageChanged={mergeLiveMessage} flash={flash} />}
-        {view === 'profile' && <ProfileView user={user} onUserUpdated={(next) => { onUserUpdated(next); load(); }} flash={flash} />}
-        {view === 'admin' && isAdmin && <AdminConsole members={members} drinks={drinks} currentUser={user} onSaved={load} flash={flash} />}
+        {view === 'chat' && <ChatPanel user={user} members={activeMembers} messages={messages} notifications={notifications} onSaved={refreshAlerts} onRefreshChat={refreshChat} onMessageChanged={mergeLiveMessage} flash={flash} />}
+        {view === 'profile' && <ProfileView user={user} onUserUpdated={(next) => {
+          onUserUpdated(next);
+          setMembers((current) => [...current.filter((member) => member.id !== next.id), next]);
+        }} flash={flash} />}
+        {view === 'admin' && isAdmin && <AdminConsole members={members} drinks={drinks} currentUser={user} onSaved={applyAdminChange} flash={flash} />}
       </>}
     </main>
     {notice && <div className="toast">{notice}</div>}

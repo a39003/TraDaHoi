@@ -27,10 +27,10 @@ function DrinkManager({ drinks, onSaved, flash }) {
   const add = async (event) => {
     event.preventDefault();
     try {
-      await teaApi.createDrink({ ...newDrink, price: Number(newDrink.price), active: true });
+      const createdDrink = await teaApi.createDrink({ ...newDrink, price: Number(newDrink.price), active: true });
       setNewDrink({ name: '', price: '', icon: '🥤' });
       flash('Đã thêm đồ uống.');
-      await onSaved();
+      onSaved({ kind: 'drink', type: 'upsert', item: createdDrink });
     } catch (error) { flash(error.message || 'Không thể thêm đồ uống.'); }
   };
   return <section className="panel admin-drink-panel">
@@ -70,13 +70,13 @@ function DrinkRow({ drink, onSaved, flash }) {
   useEffect(() => setForm(drinkForm(drink)), [drink]);
   const save = async () => {
     try {
-      await teaApi.updateDrink(drink.id, { ...form, price: Number(form.price) });
-      setEditing(false); flash('Đã cập nhật đồ uống.'); await onSaved();
+      const updatedDrink = await teaApi.updateDrink(drink.id, { ...form, price: Number(form.price) });
+      setEditing(false); flash('Đã cập nhật đồ uống.'); onSaved({ kind: 'drink', type: 'upsert', item: updatedDrink });
     } catch (error) { flash(error.message || 'Không thể sửa đồ uống.'); }
   };
   const remove = async () => {
     if (!window.confirm(`Bạn có chắc muốn xóa "${drink.name}" khỏi danh sách đồ uống không?`)) return;
-    try { await teaApi.deleteDrink(drink.id); flash('Đã xóa đồ uống.'); await onSaved(); }
+    try { await teaApi.deleteDrink(drink.id); flash('Đã xóa đồ uống.'); onSaved({ kind: 'drink', type: 'delete', id: drink.id }); }
     catch (error) { flash(error.message || 'Không thể xóa đồ uống.'); }
   };
   return <article className={`admin-row drink-admin-row ${!drink.active ? 'inactive' : ''}`}>
@@ -112,10 +112,10 @@ function MemberManager({ members, currentUser, onSaved, flash }) {
   const createAccount = async (event) => {
     event.preventDefault(); setCreating(true);
     try {
-      await teaApi.createMember(newAccount);
+      const createdMember = await teaApi.createMember(newAccount);
       setNewAccount({ displayName: '', email: '', password: '', role: 'MEMBER' });
       flash('Đã tạo tài khoản thành viên.');
-      await onSaved();
+      onSaved({ kind: 'member', type: 'upsert', item: createdMember });
     } catch (error) { flash(error.message || 'Không thể tạo tài khoản.'); }
     finally { setCreating(false); }
   };
@@ -150,13 +150,13 @@ function MemberRow({ member, isCurrent, onSaved, flash }) {
   const set = (field) => (event) => setForm({ ...form, [field]: event.target.type === 'checkbox' ? event.target.checked : event.target.value });
   const save = async (event) => {
     event.preventDefault();
-    try { await teaApi.updateMember(member.id, form); flash('Đã cập nhật thành viên.'); setOpen(false); await onSaved(); }
+    try { const updatedMember = await teaApi.updateMember(member.id, form); flash('Đã cập nhật thành viên.'); setOpen(false); onSaved({ kind: 'member', type: 'upsert', item: updatedMember }); }
     catch (error) { flash(error.message || 'Không thể cập nhật thành viên.'); }
   };
   const remove = async () => {
     if (isCurrent) return flash('Bạn không thể xóa chính tài khoản đang đăng nhập.');
     if (!window.confirm(`Bạn có chắc muốn XÓA VĨNH VIỄN tài khoản của ${member.displayName} không? Điểm danh, chat và dữ liệu liên quan của thành viên này cũng sẽ bị xóa và không thể khôi phục.`)) return;
-    try { await teaApi.deleteMember(member.id); flash('Đã xóa vĩnh viễn thành viên khỏi hệ thống.'); await onSaved(); }
+    try { await teaApi.deleteMember(member.id); flash('Đã xóa vĩnh viễn thành viên khỏi hệ thống.'); onSaved({ kind: 'member', type: 'delete', id: member.id }); }
     catch (error) { flash(error.message || 'Không thể xóa thành viên.'); }
   };
   return <article className={`member-admin-card ${!member.active ? 'inactive' : ''} ${open ? 'editing' : ''}`}>

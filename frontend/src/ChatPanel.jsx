@@ -3,6 +3,8 @@ import { apiMediaUrl, teaApi } from './api';
 
 const React = { createElement, Fragment };
 const PAGE_SIZE = 50;
+const CHAT_REFRESH_INTERVAL_MS = 3_000;
+const TYPING_REFRESH_INTERVAL_MS = 4_000;
 const emojis = [
   '😀', '😃', '😄', '😁', '😂', '🤣', '😊', '😇', '🙂', '😉', '😍', '🥰',
   '😘', '😋', '😎', '🤩', '🥳', '😅', '😭', '😢', '😤', '😡', '🤔', '🤭',
@@ -20,6 +22,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   const [notificationDetail, setNotificationDetail] = useState(null);
   const [imageViewer, setImageViewer] = useState(null);
   const [sending, setSending] = useState(false);
+  const [sendStatus, setSendStatus] = useState('');
   const [olderMessages, setOlderMessages] = useState([]);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [hasOlder, setHasOlder] = useState(messages.length >= PAGE_SIZE);
@@ -47,7 +50,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   useEffect(() => {
     const refreshTyping = () => teaApi.getTypingMembers().then(setTypingMembers).catch(() => {});
     refreshTyping();
-    const id = window.setInterval(refreshTyping, 1500);
+    const id = window.setInterval(refreshTyping, TYPING_REFRESH_INTERVAL_MS);
     return () => { window.clearInterval(id); teaApi.setTyping(false).catch(() => {}); };
   }, [user.id]);
 
@@ -61,7 +64,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
     };
     const refreshWhenVisible = () => { if (document.visibilityState === 'visible') refresh(); };
     refresh();
-    const id = window.setInterval(refresh, 1500);
+    const id = window.setInterval(refresh, CHAT_REFRESH_INTERVAL_MS);
     window.addEventListener('focus', refresh);
     document.addEventListener('visibilitychange', refreshWhenVisible);
     return () => {
@@ -146,17 +149,21 @@ export default function ChatPanel({ user, members = [], messages, notifications,
     setSending(true);
     const payload = { senderMemberId: user.id, content: text.trim(), replyToMessageId: replyTo?.id || null };
     try {
+      const optimizedImages = images.length
+        ? await optimizeChatImages(images, (status) => setSendStatus(status))
+        : images;
+      setSendStatus(images.length ? 'Đang gửi ảnh...' : 'Đang gửi tin nhắn...');
       const sentMessage = images.length
-        ? await teaApi.sendMessageWithMedia({ ...payload, images })
+        ? await teaApi.sendMessageWithMedia({ ...payload, images: optimizedImages })
         : await teaApi.sendMessage(payload);
       onMessageChanged(sentMessage);
       await teaApi.setTyping(false).catch(() => {});
       setText(''); setImages([]); setReplyTo(null); setEmojiOpen(false); setImageViewer(null);
       if (fileRef.current) fileRef.current.value = '';
       if (searchActive) clearSearch();
-      await onRefreshChat();
+      void onRefreshChat();
     } catch (error) { flash(error.message || 'Không gửi được tin nhắn.'); }
-    finally { setSending(false); }
+    finally { setSending(false); setSendStatus(''); }
   };
 
   const remove = async (message) => {
@@ -305,7 +312,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
             <button type="button" className="compose-icon" onClick={() => fileRef.current?.click()} aria-label="Chọn ảnh">📷</button>
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple hidden onChange={chooseImages} />
             <textarea rows="1" value={text} onChange={(event) => changeText(event.target.value)} onBlur={() => teaApi.setTyping(false).catch(() => {})} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder="Nhắn tin cho cả nhóm... Dùng @ để nhắc tên" />
-            <button className="primary send-button" disabled={sending}>{sending ? '...' : 'Gửi'}</button>
+            <button className="primary send-button" disabled={sending}>{sending ? (sendStatus || 'Đang gửi...') : 'Gửi'}</button>
           </div>
         </form>
       </section>
@@ -314,6 +321,70 @@ export default function ChatPanel({ user, members = [], messages, notifications,
     {notificationDetail && <NotificationDetailModal notification={notificationDetail} onClose={() => setNotificationDetail(null)} />}
     {imageViewer && <ImageViewer image={imageViewer} onClose={() => setImageViewer(null)} />}
   </>;
+}
+
+const CHAT_IMAGE_MAX_DIMENSION = 1280;
+const CHAT_IMAGE_TARGET_BYTES = 1_250_000;
+
+async function optimizeChatImages(images, onProgress) {
+  const optimized = [];
+  for (let index = 0; index < images.length; index += 1) {
+    onProgress(`Đang tối ưu ảnh ${index + 1}/${images.length}...`);
+    optimized.push(await optimizeChatImage(images[index]));
+  }
+  return optimized;
+}
+
+async function optimizeChatImage(file) {
+  // GIF may be animated. Keep it unchanged instead of only sending its first frame.
+  if (file.type === 'image/gif') return file;
+
+  try {
+    const source = await loadImageForCompression(file);
+    const largestSide = Math.max(source.naturalWidth, source.naturalHeight);
+    if (largestSide <= CHAT_IMAGE_MAX_DIMENSION && file.size <= CHAT_IMAGE_TARGET_BYTES) return file;
+
+    const scale = Math.min(1, CHAT_IMAGE_MAX_DIMENSION / largestSide);
+    const width = Math.max(1, Math.round(source.naturalWidth * scale));
+    const height = Math.max(1, Math.round(source.naturalHeight * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, width, height);
+    context.drawImage(source, 0, 0, width, height);
+
+    let quality = 0.78;
+    let compressed = await canvasToJpeg(canvas, quality);
+    while (compressed.size > CHAT_IMAGE_TARGET_BYTES && quality > 0.44) {
+      quality -= 0.12;
+      compressed = await canvasToJpeg(canvas, quality);
+    }
+
+    const name = (file.name || 'anh-chat').replace(/\.[^.]+$/, '') + '.jpg';
+    return new File([compressed], name, { type: 'image/jpeg', lastModified: Date.now() });
+  } catch {
+    // The backend still validates and compresses an image if a browser cannot
+    // optimize it locally, so a client-side optimization failure is harmless.
+    return file;
+  }
+}
+
+function loadImageForCompression(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => { URL.revokeObjectURL(url); resolve(image); };
+    image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Không thể đọc ảnh')); };
+    image.src = url;
+  });
+}
+
+function canvasToJpeg(canvas, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Không thể nén ảnh')), 'image/jpeg', quality);
+  });
 }
 
 function SelectedImagePreviews({ images, onPreview, onRemove, onClear }) {

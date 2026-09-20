@@ -37,8 +37,9 @@ import java.util.stream.Stream;
 public class ChatMediaStorageService {
     private static final long MAX_IMAGE_BYTES = 5L * 1024 * 1024;
     private static final int MAX_IMAGE_DIMENSION = 8_000;
-    private static final int TARGET_IMAGE_DIMENSION = 1_600;
-    private static final float JPEG_QUALITY = 0.82f;
+    private static final int TARGET_IMAGE_DIMENSION = 1_280;
+    private static final long FAST_PATH_MAX_BYTES = 1_500_000L;
+    private static final float JPEG_QUALITY = 0.76f;
 
     private final Path storageDirectory;
     private final long maxTotalStorageBytes;
@@ -143,6 +144,13 @@ public class ChatMediaStorageService {
         if (source == null || source.getWidth() <= 0 || source.getHeight() <= 0
                 || source.getWidth() > MAX_IMAGE_DIMENSION || source.getHeight() > MAX_IMAGE_DIMENSION) {
             throw new BusinessRuleException("Kích thước ảnh không hợp lệ");
+        }
+
+        // Ảnh đã được trình duyệt thu nhỏ trước khi tải lên không cần mã hóa
+        // lại tại server. Điều này giúp gửi ảnh nhanh hơn trên gói máy chủ nhỏ.
+        if (Math.max(source.getWidth(), source.getHeight()) <= TARGET_IMAGE_DIMENSION
+                && bytes.length <= FAST_PATH_MAX_BYTES) {
+            return new ProcessedImage(bytes, format);
         }
 
         double scale = Math.min(1d, (double) TARGET_IMAGE_DIMENSION / Math.max(source.getWidth(), source.getHeight()));

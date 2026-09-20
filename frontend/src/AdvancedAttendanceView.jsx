@@ -104,10 +104,11 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
         note: mode === 'PERSONAL' ? 'Điểm danh cá nhân' : mode === 'EVEN' ? `Đơn uống chung chia đều ${sharedMembers.length} người` : 'Đơn uống chung chia theo từng món',
         items,
       };
-      if (editingId) await teaApi.updateExpense(editingId, payload);
-      else await teaApi.createExpense(payload);
+      const savedExpense = editingId
+        ? await teaApi.updateExpense(editingId, payload)
+        : await teaApi.createExpense(payload);
       flash(editingId ? 'Đã cập nhật điểm danh.' : 'Đã lưu điểm danh.');
-      reset(); await onSaved();
+      reset(); onSaved({ type: 'upsert', expense: savedExpense });
       const latest = await teaApi.getAttendanceSettings(); setSettings(latest);
     } catch (error) { flash(error.message || 'Không thể lưu điểm danh.'); }
     finally { setSaving(false); }
@@ -136,7 +137,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
 
   const cancelAttendance = async (expense) => {
     if (!window.confirm('Bạn có chắc muốn hủy điểm danh này không? Dữ liệu sẽ bị xóa khỏi hệ thống.')) return;
-    try { await teaApi.deleteQuickAttendance(expense.id); if (editingId === expense.id) reset(); flash('Đã hủy điểm danh.'); await onSaved(); }
+    try { await teaApi.deleteQuickAttendance(expense.id); if (editingId === expense.id) reset(); flash('Đã hủy điểm danh.'); onSaved({ type: 'delete', id: expense.id }); }
     catch (error) { flash(error.message || 'Không thể hủy điểm danh.'); }
   };
 
