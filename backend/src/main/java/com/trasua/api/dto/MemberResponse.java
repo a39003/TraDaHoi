@@ -14,6 +14,7 @@ public record MemberResponse(
         String avatarUrl,
         boolean active,
         String role,
-        Instant createdAt
+        Instant createdAt,
+        Long lastChatReadMessageId
 ) {
 }

@@ -111,9 +111,12 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const [notifications, setNotifications] = useState([]);
   const [settlement, setSettlement] = useState(null);
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
+  const [attendanceEdit, setAttendanceEdit] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState('');
   const lastAlertUnreadCount = useRef(0);
+  const lastChatMessageId = useRef(0);
+  const lastFullChatSyncAt = useRef(0);
   const [calendarMonth, setCalendarMonth] = useState(monthValue);
   const weekStart = monday();
   const weekEnd = useMemo(() => {
@@ -125,17 +128,29 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const isAdmin = user.role === 'ADMIN';
 
   const load = useCallback(async () => {
+    setLoading(true);
     try {
-      const [memberData, drinkData, expenseData, chatData, notificationData, chatUnread, settlementData] = await Promise.all([
+      const [memberData, drinkData, expenseData] = await Promise.all([
         teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin), teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd),
-        teaApi.getMessages(), teaApi.getNotifications(), teaApi.getChatUnread(), teaApi.calculateWeekSettlement(weekStart),
       ]);
       setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData);
-      setMessages(chatData); setNotifications(notificationData); setChatUnreadCount(chatUnread.unreadCount || 0);
-      lastAlertUnreadCount.current = chatUnread.unreadCount || 0;
-      setSettlement(settlementData);
     } catch (error) { setNotice(error.message || 'Không tải được dữ liệu từ máy chủ.'); }
     finally { setLoading(false); }
+
+    // Chat, thông báo và tổng kết không chặn giao diện chính. Điều này đặc biệt
+    // quan trọng khi Render/Aiven vừa thức dậy hoặc kết nối mạng chậm.
+    try {
+      const [chatData, notificationData, chatUnread, settlementData] = await Promise.all([
+        teaApi.getMessages(), teaApi.getNotifications(), teaApi.getChatUnread(), teaApi.calculateWeekSettlement(weekStart),
+      ]);
+      setMessages(chatData); setNotifications(notificationData); setChatUnreadCount(chatUnread.unreadCount || 0);
+      lastAlertUnreadCount.current = chatUnread.unreadCount || 0;
+      lastChatMessageId.current = Math.max(0, ...chatData.map((message) => message.id || 0));
+      lastFullChatSyncAt.current = Date.now();
+      setSettlement(settlementData);
+    } catch {
+      // Giao diện chính vẫn dùng được; các lần đồng bộ nền sau sẽ thử lại.
+    }
   }, [isAdmin, user.id, expenseRangeStart, expenseRangeEnd]);
 
   const refreshAlerts = useCallback(async () => {
@@ -163,8 +178,22 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
 
   const refreshChat = useCallback(async () => {
     try {
-      const chatData = await teaApi.getMessages();
-      setMessages(chatData);
+      const now = Date.now();
+      const fullSync = !lastChatMessageId.current || now - lastFullChatSyncAt.current >= 60_000;
+      const chatData = fullSync
+        ? await teaApi.getMessages()
+        : await teaApi.getMessages({ afterId: lastChatMessageId.current });
+
+      if (fullSync) {
+        setMessages(chatData);
+        lastChatMessageId.current = Math.max(0, ...chatData.map((message) => message.id || 0));
+        lastFullChatSyncAt.current = now;
+      } else if (chatData.length) {
+        lastChatMessageId.current = Math.max(lastChatMessageId.current, ...chatData.map((message) => message.id || 0));
+        setMessages((current) => [...new Map([...current, ...chatData].map((message) => [message.id, message])).values()]
+          .sort((first, second) => new Date(first.createdAt) - new Date(second.createdAt))
+          .slice(-50));
+      }
     } catch {
       // Keep the current messages when a background refresh is interrupted.
     }
@@ -188,6 +217,24 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     void refreshSettlement();
   }, [refreshSettlement]);
 
+  const deleteAttendanceFromCalendar = useCallback(async (expense) => {
+    if (!window.confirm('Bạn có chắc muốn xóa điểm danh này không? Dữ liệu sẽ bị xóa khỏi hệ thống.')) return false;
+    try {
+      await teaApi.deleteQuickAttendance(expense.id);
+      applyAttendanceChange({ type: 'delete', id: expense.id });
+      flash('Đã xóa điểm danh.');
+      return true;
+    } catch (error) {
+      flash(error.message || 'Không thể xóa điểm danh.');
+      return false;
+    }
+  }, [applyAttendanceChange]);
+
+  const editAttendanceFromCalendar = useCallback((expense) => {
+    setAttendanceEdit({ expense, token: Date.now() });
+    setView('attendance');
+  }, []);
+
   const applyAdminChange = useCallback((change) => {
     if (!change) return;
     const updateList = (setter) => {
@@ -201,6 +248,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
 
   const mergeLiveMessage = useCallback((message) => {
     if (!message?.id) return;
+    lastChatMessageId.current = Math.max(lastChatMessageId.current, message.id);
     setMessages((current) => [...current.filter((item) => item.id !== message.id), message]
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       .slice(-50));
@@ -251,8 +299,8 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     <main className="app-main">
       <header className="app-header"><div><p className="eyebrow">NHÓM TRÀ ĐÁ</p><h1>{titles[view]}</h1></div><NotificationBell user={user} messages={messages} notifications={notifications} chatUnreadCount={chatUnreadCount} chatOpen={view === 'chat'} onOpenChat={() => setView('chat')} onRefresh={refreshAlerts} /></header>
       {loading ? <p className="loading">Đang tải dữ liệu...</p> : <>
-        {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={applyAttendanceChange} flash={flash} />}
-        {view === 'week' && <MonthCalendar records={visibleRecords} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} />}
+        {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={applyAttendanceChange} editRequest={attendanceEdit} onEditHandled={() => setAttendanceEdit(null)} flash={flash} />}
+        {view === 'week' && <MonthCalendar records={visibleRecords} expenses={expenses} user={user} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} onEditExpense={editAttendanceFromCalendar} onDeleteExpense={deleteAttendanceFromCalendar} />}
         {view === 'settlement' && <SettlementView balances={balances} settlement={settlement} user={user} weekStart={weekStart} weekEnd={settlement?.weekEnd || weekEnd} isAdmin={isAdmin} />}
         {view === 'chat' && <ChatPanel user={user} members={activeMembers} messages={messages} notifications={notifications} onSaved={refreshAlerts} onRefreshChat={refreshChat} onMessageChanged={mergeLiveMessage} flash={flash} />}
         {view === 'profile' && <ProfileView user={user} onUserUpdated={(next) => {
@@ -384,7 +432,7 @@ function RecordList({ records }) {
   </article>)}</div>;
 }
 
-function MonthCalendar({ records, month, onMonthChange, isAdmin }) {
+function MonthCalendar({ records, expenses, user, month, onMonthChange, isAdmin, onEditExpense, onDeleteExpense }) {
   const bounds = useMemo(() => calendarRange(month), [month]);
   const grouped = useMemo(() => records.reduce((all, record) => {
     if (record.date >= bounds.start && record.date <= bounds.end) {
@@ -421,11 +469,11 @@ function MonthCalendar({ records, month, onMonthChange, isAdmin }) {
       </button>;
     })}</div>
   </section>
-  {selectedDate && <DayDetailModal date={selectedDate} records={grouped[selectedDate] || []} isAdmin={isAdmin} onClose={() => setSelectedDate(null)} />}
+  {selectedDate && <DayDetailModal date={selectedDate} records={grouped[selectedDate] || []} expenses={expenses.filter((expense) => expense.orderDate === selectedDate)} user={user} isAdmin={isAdmin} onEditExpense={onEditExpense} onDeleteExpense={onDeleteExpense} onClose={() => setSelectedDate(null)} />}
   </>;
 }
 
-function DayDetailModal({ date, records, isAdmin, onClose }) {
+function DayDetailModal({ date, records, expenses, user, isAdmin, onEditExpense, onDeleteExpense, onClose }) {
   useEffect(() => {
     const close = (event) => { if (event.key === 'Escape') onClose(); };
     document.addEventListener('keydown', close);
@@ -438,6 +486,14 @@ function DayDetailModal({ date, records, isAdmin, onClose }) {
     <div className="day-detail-title"><span>📅</span><div><p className="eyebrow">CHI TIẾT ĐIỂM DANH</p><h2>{label}</h2><p>{isAdmin ? 'Danh sách thành viên đi uống, đồ uống, giá tiền và người đã trả.' : 'Đồ uống, số tiền và người đã trả cho lượt uống của bạn.'}</p></div></div>
     <div className="day-detail-summary"><span><small>Số lượt</small><b>{records.length}</b></span><span><small>Tổng tiền</small><b>{currency(total)}</b></span></div>
     <div className="day-detail-list">{records.length ? <RecordList records={records} /> : <p className="empty">Không có lượt uống nước trong ngày này.</p>}</div>
+    {expenses.length > 0 && <div className="day-detail-actions">{expenses.map((expense) => {
+      const canManage = isAdmin || expense.createdBy?.id === user.id;
+      if (!canManage) return null;
+      return <div className="day-detail-order-actions" key={expense.id}>
+        <span>Đơn #{expense.id}{expense.createdBy?.id === user.id ? ' · Bạn đã tạo' : ` · ${expense.createdBy?.displayName || 'Admin'} đã tạo`}</span>
+        <div><button type="button" className="outline small" onClick={() => { onEditExpense(expense); onClose(); }}>✎ Sửa</button><button type="button" className="danger small" onClick={async () => { if (await onDeleteExpense(expense)) onClose(); }}>Xóa</button></div>
+      </div>;
+    })}</div>}
   </section></div>;
 }
 

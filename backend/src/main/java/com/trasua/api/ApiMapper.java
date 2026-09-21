@@ -33,7 +33,7 @@ public final class ApiMapper {
     public static MemberResponse member(Member entity) {
         return new MemberResponse(entity.getId(), entity.getDisplayName(), entity.getEmail(), entity.getBankName(),
                 entity.getBankBin(), entity.getAccountNumber(), entity.getAccountName(), entity.getQrCodeUrl(), entity.getAvatarUrl(),
-                entity.isActive(), entity.getRole(), entity.getCreatedAt());
+                entity.isActive(), entity.getRole(), entity.getCreatedAt(), entity.getLastChatReadMessageId());
     }
 
     public static MemberBriefResponse brief(Member entity) {

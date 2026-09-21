@@ -6,7 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 
+@BatchSize(size = 100)
 @Entity
 @Table(name = "members")
 public class Member extends AuditableEntity {
@@ -37,6 +39,13 @@ public class Member extends AuditableEntity {
 
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
+
+    @jakarta.persistence.Lob
+    @Column(name = "avatar_data", columnDefinition = "MEDIUMBLOB")
+    private byte[] avatarData;
+
+    @Column(name = "avatar_content_type", length = 100)
+    private String avatarContentType;
 
     @Column(nullable = false)
     private boolean active = true;
@@ -76,6 +85,10 @@ public class Member extends AuditableEntity {
     public void setQrCodeUrl(String qrCodeUrl) { this.qrCodeUrl = qrCodeUrl; }
     public String getAvatarUrl() { return avatarUrl; }
     public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public byte[] getAvatarData() { return avatarData; }
+    public void setAvatarData(byte[] avatarData) { this.avatarData = avatarData; }
+    public String getAvatarContentType() { return avatarContentType; }
+    public void setAvatarContentType(String avatarContentType) { this.avatarContentType = avatarContentType; }
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
     public String getPasswordHash() { return passwordHash; }

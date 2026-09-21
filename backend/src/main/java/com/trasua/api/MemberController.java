@@ -8,6 +8,7 @@ import com.trasua.service.AuthService;
 import com.trasua.service.ChatMediaStorageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/members")
@@ -68,8 +70,18 @@ public class MemberController {
     public MemberResponse uploadAvatar(@RequestHeader("Authorization") String authorization,
                                        @RequestPart("image") MultipartFile image) {
         var current = auth.currentMember(authorization);
-        var stored = media.store(image);
-        return ApiMapper.member(members.updateAvatar(current.getId(), "/api/members/avatar/" + stored.storageKey()));
+        var prepared = media.prepare(image);
+        return ApiMapper.member(members.updateAvatar(current.getId(), prepared.bytes(), prepared.contentType()));
+    }
+
+    @GetMapping("/avatar/member/{id}")
+    public ResponseEntity<byte[]> memberAvatar(@PathVariable Long id) {
+        var avatar = members.avatarContent(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(avatar.contentType()))
+                .cacheControl(CacheControl.noCache())
+                .header("X-Content-Type-Options", "nosniff")
+                .body(avatar.bytes());
     }
 
     @GetMapping("/avatar/{storageKey:.+}")

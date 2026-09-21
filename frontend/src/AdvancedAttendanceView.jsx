@@ -13,7 +13,7 @@ const weekdayLabel = () => {
   return value.charAt(0).toUpperCase() + value.slice(1);
 };
 
-export default function AdvancedAttendanceView({ user, members, drinks, todayExpenses, isAdmin, onSaved, flash }) {
+export default function AdvancedAttendanceView({ user, members, drinks, todayExpenses, isAdmin, onSaved, editRequest, onEditHandled, flash }) {
   const [mode, setMode] = useState('PERSONAL');
   const [lines, setLines] = useState([]);
   const [payerId, setPayerId] = useState(String(user.id));
@@ -21,9 +21,10 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   const [favorites, setFavorites] = useState([]);
   const [settings, setSettings] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [attendanceDate, setAttendanceDate] = useState(today());
   const [saving, setSaving] = useState(false);
 
-  const newLine = (consumerId = user.id, drinkId = drinks[0]?.id) => ({ key: key(), drinkId: String(drinkId || ''), quantity: 1, consumerId: String(consumerId) });
+  const newLine = (consumerId = user.id, drinkId = '') => ({ key: key(), drinkId: String(drinkId || ''), quantity: 1, consumerId: String(consumerId) });
   useEffect(() => {
     if (!lines.length && drinks.length) setLines([newLine()]);
   }, [drinks.length]);
@@ -44,6 +45,10 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   const addLine = () => setLines((current) => [...current, newLine(mode === 'PERSONAL' ? user.id : members[0]?.id)]);
   const removeLine = (lineKey) => setLines((current) => current.length === 1 ? current : current.filter((line) => line.key !== lineKey));
   const toggleSharedMember = (id) => setSharedMembers((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+  const chooseFavorite = (drinkId) => setLines((current) => {
+    if (current.length === 1 && !current[0].drinkId) return [{ ...current[0], drinkId: String(drinkId) }];
+    return [...current, newLine(user.id, drinkId)];
+  });
 
   const changeMode = (next) => {
     setMode(next);
@@ -89,8 +94,9 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   };
 
   const reset = () => {
-    setEditingId(null); setMode('PERSONAL'); setPayerId(String(user.id)); setSharedMembers([user.id]);
+    setEditingId(null); setAttendanceDate(today()); setMode('PERSONAL'); setPayerId(String(user.id)); setSharedMembers([user.id]);
     setLines(drinks.length ? [newLine()] : []);
+    onEditHandled?.();
   };
 
   const save = async (event) => {
@@ -100,7 +106,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
     try {
       const items = buildItems();
       const payload = {
-        orderDate: today(), payerMemberId: Number(payerId), splitMode: mode === 'EVEN' ? 'EVEN' : 'ITEMIZED',
+        orderDate: attendanceDate, payerMemberId: Number(payerId), splitMode: mode === 'EVEN' ? 'EVEN' : 'ITEMIZED',
         note: mode === 'PERSONAL' ? 'Điểm danh cá nhân' : mode === 'EVEN' ? `Đơn uống chung chia đều ${sharedMembers.length} người` : 'Đơn uống chung chia theo từng món',
         items,
       };
@@ -115,7 +121,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   };
 
   const edit = (expense) => {
-    setEditingId(expense.id); setPayerId(String(expense.payer.id));
+    setEditingId(expense.id); setAttendanceDate(expense.orderDate); setPayerId(String(expense.payer.id));
     if (expense.splitMode === 'EVEN') {
       setMode('EVEN');
       setSharedMembers([...new Set(expense.items.map((item) => item.consumer.id))]);
@@ -135,6 +141,10 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  useEffect(() => {
+    if (editRequest?.token && editRequest.expense) edit(editRequest.expense);
+  }, [editRequest?.token]);
+
   const cancelAttendance = async (expense) => {
     if (!window.confirm('Bạn có chắc muốn hủy điểm danh này không? Dữ liệu sẽ bị xóa khỏi hệ thống.')) return;
     try { await teaApi.deleteQuickAttendance(expense.id); if (editingId === expense.id) reset(); flash('Đã hủy điểm danh.'); onSaved({ type: 'delete', id: expense.id }); }
@@ -149,7 +159,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
         <button type="button" className={mode === 'PERSONAL' ? 'active' : ''} onClick={() => changeMode('PERSONAL')}>Cá nhân</button>
         <button type="button" className={mode === 'EVEN' ? 'active' : ''} onClick={() => changeMode('EVEN')}>Chia đều</button>
       </div>
-      {favorites.length > 0 && <div className="favorite-shortcuts"><span>Chọn nhanh:</span>{orderedDrinks.filter((drink) => favorites.includes(drink.id)).map((drink) => <button type="button" key={drink.id} onClick={() => setLines((current) => [...current, newLine(user.id, drink.id)])}>{drink.icon || '🥤'} {drink.name}</button>)}</div>}
+      {favorites.length > 0 && <div className="favorite-shortcuts"><span>Chọn nhanh:</span>{orderedDrinks.filter((drink) => favorites.includes(drink.id)).map((drink) => <button type="button" key={drink.id} onClick={() => chooseFavorite(drink.id)}>{drink.icon || '🥤'} {drink.name}</button>)}</div>}
       <form onSubmit={save} className="stack-form">
         <div className="drink-line-list">{lines.map((line, index) => <div className="drink-line" key={line.key}>
           <button type="button" className={`favorite-toggle ${favorites.includes(Number(line.drinkId)) ? 'active' : ''}`} onClick={() => line.drinkId && toggleFavorite(Number(line.drinkId))} title="Đồ uống yêu thích">{favorites.includes(Number(line.drinkId)) ? '★' : '☆'}</button>

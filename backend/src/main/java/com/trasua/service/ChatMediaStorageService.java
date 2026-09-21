@@ -61,30 +61,43 @@ public class ChatMediaStorageService {
     }
 
     public synchronized StoredChatMedia store(MultipartFile source) {
-        if (source == null || source.isEmpty()) throw new BusinessRuleException("Ảnh gửi lên đang trống");
-        if (source.getSize() > MAX_IMAGE_BYTES) throw new BusinessRuleException("Mỗi ảnh chỉ được tối đa 5 MB");
-
         try {
-            byte[] originalBytes = source.getBytes();
-            ImageFormat originalFormat = ImageFormat.detect(originalBytes);
-            if (originalFormat == null) throw new BusinessRuleException("Chỉ hỗ trợ ảnh JPG, PNG, GIF hoặc WEBP");
-
-            ProcessedImage processed = compress(originalBytes, originalFormat);
+            PreparedImage processed = prepare(source);
             long currentUsage = storageUsageBytes();
             if (currentUsage + processed.bytes().length > maxTotalStorageBytes) {
                 throw new BusinessRuleException("Kho ảnh đã đạt giới hạn " + humanSize(maxTotalStorageBytes)
                         + ". Hãy xóa bớt ảnh cũ trước khi gửi tiếp.");
             }
 
-            String storageKey = UUID.randomUUID() + "." + processed.format().extension;
+            String storageKey = UUID.randomUUID() + "." + processed.extension();
             Path destination = resolve(storageKey);
             Files.write(destination, processed.bytes(), StandardOpenOption.CREATE_NEW);
-            return new StoredChatMedia(storageKey, safeFilename(source.getOriginalFilename(), processed.format().extension),
-                    processed.format().contentType, processed.bytes().length);
+            return new StoredChatMedia(storageKey, safeFilename(source.getOriginalFilename(), processed.extension()),
+                    processed.contentType(), processed.bytes().length);
         } catch (BusinessRuleException error) {
             throw error;
         } catch (IOException error) {
             throw new IllegalStateException("Không thể lưu ảnh chat", error);
+        }
+    }
+
+    /**
+     * Prepares an avatar without placing it on Render's temporary disk. Avatars
+     * are persisted in MySQL, so a deploy/restart cannot make them disappear.
+     */
+    public PreparedImage prepare(MultipartFile source) {
+        if (source == null || source.isEmpty()) throw new BusinessRuleException("Ảnh gửi lên đang trống");
+        if (source.getSize() > MAX_IMAGE_BYTES) throw new BusinessRuleException("Mỗi ảnh chỉ được tối đa 5 MB");
+        try {
+            byte[] originalBytes = source.getBytes();
+            ImageFormat originalFormat = ImageFormat.detect(originalBytes);
+            if (originalFormat == null) throw new BusinessRuleException("Chỉ hỗ trợ ảnh JPG, PNG, GIF hoặc WEBP");
+            ProcessedImage processed = compress(originalBytes, originalFormat);
+            return new PreparedImage(processed.bytes(), processed.format().contentType, processed.format().extension);
+        } catch (BusinessRuleException error) {
+            throw error;
+        } catch (IOException error) {
+            throw new IllegalStateException("Không thể xử lý ảnh", error);
         }
     }
 
@@ -145,10 +158,12 @@ public class ChatMediaStorageService {
                 || source.getWidth() > MAX_IMAGE_DIMENSION || source.getHeight() > MAX_IMAGE_DIMENSION) {
             throw new BusinessRuleException("Kích thước ảnh không hợp lệ");
         }
+        int orientation = format == ImageFormat.JPEG ? jpegOrientation(bytes) : 1;
+        if (orientation != 1) source = orientJpeg(source, orientation);
 
         // Ảnh đã được trình duyệt thu nhỏ trước khi tải lên không cần mã hóa
         // lại tại server. Điều này giúp gửi ảnh nhanh hơn trên gói máy chủ nhỏ.
-        if (Math.max(source.getWidth(), source.getHeight()) <= TARGET_IMAGE_DIMENSION
+        if (orientation == 1 && Math.max(source.getWidth(), source.getHeight()) <= TARGET_IMAGE_DIMENSION
                 && bytes.length <= FAST_PATH_MAX_BYTES) {
             return new ProcessedImage(bytes, format);
         }
@@ -174,6 +189,89 @@ public class ChatMediaStorageService {
             return new ProcessedImage(bytes, format);
         }
         return new ProcessedImage(compressed, outputFormat);
+    }
+
+    // iPhone/Android cameras often record a horizontal JPEG with an EXIF
+    // orientation flag. ImageIO ignores that flag when recompressing, which
+    // previously made a portrait avatar become sideways after upload.
+    private BufferedImage orientJpeg(BufferedImage source, int orientation) {
+        int width = source.getWidth();
+        int height = source.getHeight();
+        int imageType = source.getColorModel().hasAlpha() ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+        BufferedImage target;
+        Graphics2D graphics;
+        switch (orientation) {
+            case 3 -> {
+                target = new BufferedImage(width, height, imageType);
+                graphics = target.createGraphics();
+                graphics.translate(width, height);
+                graphics.rotate(Math.PI);
+            }
+            case 6 -> {
+                target = new BufferedImage(height, width, imageType);
+                graphics = target.createGraphics();
+                graphics.translate(height, 0);
+                graphics.rotate(Math.PI / 2);
+            }
+            case 8 -> {
+                target = new BufferedImage(height, width, imageType);
+                graphics = target.createGraphics();
+                graphics.translate(0, width);
+                graphics.rotate(-Math.PI / 2);
+            }
+            default -> {
+                return source;
+            }
+        }
+        graphics.drawImage(source, 0, 0, null);
+        graphics.dispose();
+        return target;
+    }
+
+    private int jpegOrientation(byte[] bytes) {
+        if (bytes.length < 14 || (bytes[0] & 0xFF) != 0xFF || (bytes[1] & 0xFF) != 0xD8) return 1;
+        int offset = 2;
+        while (offset + 4 < bytes.length && (bytes[offset] & 0xFF) == 0xFF) {
+            int marker = bytes[offset + 1] & 0xFF;
+            int length = unsignedShort(bytes, offset + 2, true);
+            if (length < 2 || offset + 2 + length > bytes.length) return 1;
+            if (marker == 0xE1 && length >= 10 && bytes[offset + 4] == 'E' && bytes[offset + 5] == 'x'
+                    && bytes[offset + 6] == 'i' && bytes[offset + 7] == 'f' && bytes[offset + 8] == 0 && bytes[offset + 9] == 0) {
+                int tiff = offset + 10;
+                boolean bigEndian = bytes[tiff] == 'M' && bytes[tiff + 1] == 'M';
+                if (!(bigEndian || (bytes[tiff] == 'I' && bytes[tiff + 1] == 'I'))) return 1;
+                int ifd = tiff + unsignedInt(bytes, tiff + 4, bigEndian);
+                if (ifd < tiff || ifd + 2 > bytes.length) return 1;
+                int entries = unsignedShort(bytes, ifd, bigEndian);
+                for (int index = 0; index < entries; index++) {
+                    int entry = ifd + 2 + index * 12;
+                    if (entry + 12 > bytes.length) return 1;
+                    if (unsignedShort(bytes, entry, bigEndian) == 0x0112
+                            && unsignedShort(bytes, entry + 2, bigEndian) == 3
+                            && unsignedInt(bytes, entry + 4, bigEndian) == 1) {
+                        int value = unsignedShort(bytes, entry + 8, bigEndian);
+                        return value >= 1 && value <= 8 ? value : 1;
+                    }
+                }
+                return 1;
+            }
+            offset += 2 + length;
+        }
+        return 1;
+    }
+
+    private int unsignedShort(byte[] bytes, int offset, boolean bigEndian) {
+        if (offset + 2 > bytes.length) return 0;
+        int first = bytes[offset] & 0xFF;
+        int second = bytes[offset + 1] & 0xFF;
+        return bigEndian ? (first << 8) | second : (second << 8) | first;
+    }
+
+    private int unsignedInt(byte[] bytes, int offset, boolean bigEndian) {
+        if (offset + 4 > bytes.length) return 0;
+        int first = unsignedShort(bytes, offset, bigEndian);
+        int second = unsignedShort(bytes, offset + 2, bigEndian);
+        return bigEndian ? (first << 16) | second : (second << 16) | first;
     }
 
     private byte[] writePng(BufferedImage image) throws IOException {
@@ -223,6 +321,7 @@ public class ChatMediaStorageService {
     }
 
     public record StoredChatMedia(String storageKey, String originalFilename, String contentType, long byteSize) {}
+    public record PreparedImage(byte[] bytes, String contentType, String extension) {}
     private record ProcessedImage(byte[] bytes, ImageFormat format) {}
 
     private enum ImageFormat {

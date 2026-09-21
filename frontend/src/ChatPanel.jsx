@@ -2,7 +2,7 @@ import { createElement, Fragment, useEffect, useMemo, useRef, useState } from 'r
 import { apiMediaUrl, teaApi } from './api';
 
 const React = { createElement, Fragment };
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 30;
 const CHAT_REFRESH_INTERVAL_MS = 3_000;
 const TYPING_REFRESH_INTERVAL_MS = 4_000;
 const emojis = [
@@ -33,6 +33,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   const [searching, setSearching] = useState(false);
   const [searchHasMore, setSearchHasMore] = useState(false);
   const [typingMembers, setTypingMembers] = useState([]);
+  const [readStates, setReadStates] = useState([]);
   const [reactionPickerId, setReactionPickerId] = useState(null);
   const fileRef = useRef(null);
   const scrollRef = useRef(null);
@@ -52,6 +53,16 @@ export default function ChatPanel({ user, members = [], messages, notifications,
     refreshTyping();
     const id = window.setInterval(refreshTyping, TYPING_REFRESH_INTERVAL_MS);
     return () => { window.clearInterval(id); teaApi.setTyping(false).catch(() => {}); };
+  }, [user.id]);
+
+  useEffect(() => {
+    let active = true;
+    const refreshReadStates = () => teaApi.getChatReadStates().then((data) => {
+      if (active) setReadStates(data);
+    }).catch(() => {});
+    refreshReadStates();
+    const id = window.setInterval(refreshReadStates, 5_000);
+    return () => { active = false; window.clearInterval(id); };
   }, [user.id]);
 
   useEffect(() => {
@@ -277,6 +288,8 @@ export default function ChatPanel({ user, members = [], messages, notifications,
           {displayedMessages.length === 0 && <p className="empty">{searchActive ? 'Không có tin nhắn nào khớp từ khóa.' : 'Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện nhé!'}</p>}
           {displayedMessages.map((message) => {
             const mine = message.sender?.id === user.id;
+            const seenBy = mine ? readStates.filter((state) => state.member?.id !== user.id
+              && Number(state.lastReadMessageId || 0) >= Number(message.id)) : [];
             const canDelete = !message.deleted && (mine || user.role === 'ADMIN');
             const reactionData = groupReactions(message.reactions || [], user.id);
             return <article className={`message ${mine ? 'mine' : ''} ${message.deleted ? 'deleted' : ''}`} key={message.id}>
@@ -289,9 +302,12 @@ export default function ChatPanel({ user, members = [], messages, notifications,
                 <div id={`message-${message.id}`} className="message-bubble">
                   {message.deleted ? <p className="deleted-text">Tin nhắn đã bị xóa</p> : <>
                     {message.content && <p>{renderMessageText(message.content, members, searchActive ? searchText.trim() : '')}</p>}
-                    {message.attachments?.length > 0 && <div className="chat-images">{message.attachments.map((image) => <button type="button" className="chat-image-button" key={image.id} onClick={() => setImageViewer({ src: apiMediaUrl(image.url), alt: image.filename || 'Ảnh đính kèm' })}><img className="chat-image" src={apiMediaUrl(image.url)} alt={image.filename || 'Ảnh đính kèm'} /></button>)}</div>}
+                    {message.attachments?.length > 0 && <div className="chat-images">{message.attachments.map((image) => <button type="button" className="chat-image-button" key={image.id} onClick={() => setImageViewer({ src: apiMediaUrl(image.url), alt: image.filename || 'Ảnh đính kèm' })}><img className="chat-image" src={apiMediaUrl(image.url)} alt={image.filename || 'Ảnh đính kèm'} loading="lazy" decoding="async" /></button>)}</div>}
                   </>}
                 </div>
+                {mine && !message.deleted && seenBy.length > 0 && <p className="message-seen" title={seenBy.map((state) => state.member.displayName).join(', ')}>
+                  Đã xem: {seenBy.map((state) => state.member.displayName).join(', ')}
+                </p>}
                 {!message.deleted && reactionData.length > 0 && <div className="message-reactions">{reactionData.map((reaction) => <button type="button" className={reaction.mine ? 'mine' : ''} key={reaction.emoji} title={reaction.names.join(', ')} onClick={() => react(message.id, reaction.emoji)}>{reaction.emoji} <b>{reaction.count}</b></button>)}</div>}
                 {!message.deleted && <div className="message-actions"><button type="button" onClick={() => setReactionPickerId(reactionPickerId === message.id ? null : message.id)}>☺ Cảm xúc</button><button type="button" onClick={() => { setReplyTo(message); setEmojiOpen(false); if (searchActive) clearSearch(); }}>↩ Trả lời</button>{canDelete && <button type="button" className="delete-message" onClick={() => remove(message)}>🗑 Xóa</button>}</div>}
                 {reactionPickerId === message.id && <div className="reaction-picker">{['👍', '❤️', '😂', '😮', '😢', '🎉'].map((emoji) => <button type="button" key={emoji} onClick={() => react(message.id, emoji)}>{emoji}</button>)}</div>}

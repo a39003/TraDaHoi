@@ -5,6 +5,7 @@ import com.trasua.api.dto.ChatMessageRequest;
 import com.trasua.api.dto.ChatMessageResponse;
 import com.trasua.api.dto.ChatUnreadResponse;
 import com.trasua.api.dto.ChatReactionRequest;
+import com.trasua.api.dto.ChatReadStateResponse;
 import com.trasua.domain.ChatAttachment;
 import com.trasua.domain.ChatMessage;
 import com.trasua.domain.Member;
@@ -63,8 +64,16 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessageResponse> list(Instant before, int limit) {
+    public List<ChatMessageResponse> list(Instant before, Long afterId, int limit) {
+        if (before != null && afterId != null) {
+            throw new BusinessRuleException("Chỉ được dùng một kiểu phân trang tin nhắn mỗi lần");
+        }
         int pageSize = Math.max(1, Math.min(limit, 100));
+        if (afterId != null) {
+            return messages.findNewerThanId(afterId, PageRequest.of(0, pageSize)).stream()
+                    .map(ApiMapper::chatMessage)
+                    .toList();
+        }
         List<ChatMessage> result = before == null
                 ? messages.findRecent(PageRequest.of(0, pageSize))
                 : messages.findOlderThan(before, PageRequest.of(0, pageSize));
@@ -92,6 +101,13 @@ public class ChatService {
         Long lastReadId = actor.getLastChatReadMessageId();
         long count = messages.countBySenderIdNotAndIdGreaterThan(actor.getId(), lastReadId == null ? 0L : lastReadId);
         return new ChatUnreadResponse(count, lastReadId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatReadStateResponse> readStates() {
+        return members.list(false).stream()
+                .map(member -> new ChatReadStateResponse(ApiMapper.brief(member), member.getLastChatReadMessageId()))
+                .toList();
     }
 
     @Transactional

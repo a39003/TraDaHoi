@@ -118,10 +118,21 @@ public class MemberService {
         return member;
     }
     @Transactional
-    public Member updateAvatar(Long id, String avatarUrl) {
+    public Member updateAvatar(Long id, byte[] avatarData, String avatarContentType) {
         Member member = getRequired(id);
-        member.setAvatarUrl(avatarUrl);
+        member.setAvatarData(avatarData);
+        member.setAvatarContentType(avatarContentType);
+        member.setAvatarUrl("/api/members/avatar/member/" + member.getId());
         return member;
+    }
+
+    @Transactional(readOnly = true)
+    public AvatarContent avatarContent(Long id) {
+        Member member = getRequired(id);
+        if (member.getAvatarData() == null || member.getAvatarData().length == 0 || member.getAvatarContentType() == null) {
+            throw new ResourceNotFoundException("Thành viên chưa có ảnh đại diện");
+        }
+        return new AvatarContent(member.getAvatarData(), member.getAvatarContentType());
     }
 
     @Transactional
@@ -167,4 +178,6 @@ public class MemberService {
         String storageKey = avatarUrl.substring(prefix.length());
         return storageKey.isBlank() ? null : storageKey;
     }
+
+    public record AvatarContent(byte[] bytes, String contentType) {}
 }

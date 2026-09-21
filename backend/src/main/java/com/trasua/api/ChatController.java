@@ -4,11 +4,13 @@ import com.trasua.api.dto.ChatMessageRequest;
 import com.trasua.api.dto.ChatMessageResponse;
 import com.trasua.api.dto.ChatUnreadResponse;
 import com.trasua.api.dto.ChatReactionRequest;
+import com.trasua.api.dto.ChatReadStateResponse;
 import com.trasua.service.ChatMediaContent;
 import com.trasua.service.ChatService;
 import com.trasua.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/chat/messages")
@@ -43,9 +46,10 @@ public class ChatController {
     @GetMapping
     public List<ChatMessageResponse> list(@RequestHeader("Authorization") String authorization,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant before,
+            @RequestParam(required = false) Long afterId,
             @RequestParam(defaultValue = "50") int limit) {
         auth.currentMember(authorization);
-        return chat.list(before, limit);
+        return chat.list(before, afterId, limit);
     }
 
     @GetMapping("/search")
@@ -60,6 +64,12 @@ public class ChatController {
     @GetMapping("/unread-count")
     public ChatUnreadResponse unreadCount(@RequestHeader("Authorization") String authorization) {
         return chat.unreadCount(auth.currentMember(authorization));
+    }
+
+    @GetMapping("/read-states")
+    public List<ChatReadStateResponse> readStates(@RequestHeader("Authorization") String authorization) {
+        auth.currentMember(authorization);
+        return chat.readStates();
     }
 
     @PatchMapping("/read")
@@ -112,6 +122,7 @@ public class ChatController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(media.contentType()))
                 .contentLength(media.sizeBytes())
+                .cacheControl(CacheControl.maxAge(180, TimeUnit.DAYS).cachePublic())
                 .header("X-Content-Type-Options", "nosniff")
                 .body(media.resource());
     }

@@ -103,9 +103,10 @@ export const teaApi = {
   markNotificationRead: (notificationId) => api(`/notifications/${notificationId}/read`, { method: 'PATCH' }),
   deleteNotification: (notificationId) => api(`/notifications/${notificationId}`, { method: 'DELETE' }),
 
-  getMessages: ({ before, limit = 50 } = {}) => {
+  getMessages: ({ before, afterId, limit = 30 } = {}) => {
     const parameters = new URLSearchParams({ limit: String(limit) });
     if (before) parameters.set('before', before);
+    if (afterId) parameters.set('afterId', String(afterId));
     return api(`/chat/messages?${parameters}`);
   },
   searchMessages: (query, { before, limit = 50 } = {}) => {
@@ -114,6 +115,7 @@ export const teaApi = {
     return api(`/chat/messages/search?${parameters}`);
   },
   getChatUnread: () => api('/chat/messages/unread-count'),
+  getChatReadStates: () => api('/chat/messages/read-states'),
   markChatRead: () => api('/chat/messages/read', { method: 'PATCH' }),
   sendMessage: (payload) => api('/chat/messages', { method: 'POST', body: JSON.stringify(payload) }),
   sendMessageWithMedia: ({ senderMemberId, content, replyToMessageId, images }) => {

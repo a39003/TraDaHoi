@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -36,10 +37,12 @@ public class ChatMessage {
     @JoinColumn(name = "reply_to_message_id")
     private ChatMessage replyTo;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<ChatAttachment> attachments = new ArrayList<>();
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<ChatReaction> reactions = new ArrayList<>();

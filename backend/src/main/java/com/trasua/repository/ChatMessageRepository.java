@@ -18,6 +18,9 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     @Query("select distinct m from ChatMessage m join fetch m.sender left join fetch m.replyTo r left join fetch r.sender where m.createdAt < :before order by m.createdAt desc")
     List<ChatMessage> findOlderThan(@Param("before") Instant before, Pageable pageable);
 
+    @Query("select distinct m from ChatMessage m join fetch m.sender left join fetch m.replyTo r left join fetch r.sender where m.id > :afterId order by m.id asc")
+    List<ChatMessage> findNewerThanId(@Param("afterId") Long afterId, Pageable pageable);
+
     @Query("select distinct m from ChatMessage m join fetch m.sender left join fetch m.replyTo r left join fetch r.sender order by m.createdAt desc")
     List<ChatMessage> findRecent(Pageable pageable);
 
