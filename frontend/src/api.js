@@ -1,4 +1,9 @@
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+let blockingRequestCount = 0;
+
+function publishBlockingRequestState() {
+  window.dispatchEvent(new CustomEvent('tea-api-busy', { detail: { pending: blockingRequestCount } }));
+}
 
 // In production, a reverse proxy can expose the API under the same domain as
 // the website. That path has no cross-origin request at all. For a separate
@@ -8,17 +13,27 @@ export const API_BASE_URL = (configuredApiUrl
   .replace(/\/$/, '');
 
 export async function api(path, options = {}) {
-  const isFormData = options.body instanceof FormData;
-  const headers = { ...(options.headers ?? {}) };
+  const { blocking = false, ...fetchOptions } = options;
+  const isFormData = fetchOptions.body instanceof FormData;
+  const headers = { ...(fetchOptions.headers ?? {}) };
   const token = window.localStorage.getItem('tea-session-token');
   if (token) headers.Authorization = `Bearer ${token}`;
   if (!isFormData && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
 
   let response;
+  if (blocking) {
+    blockingRequestCount += 1;
+    publishBlockingRequestState();
+  }
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+    response = await fetch(`${API_BASE_URL}${path}`, { ...fetchOptions, headers });
   } catch {
     throw new Error('Không thể kết nối tới máy chủ. Hãy kiểm tra backend đang chạy rồi thử lại.');
+  } finally {
+    if (blocking) {
+      blockingRequestCount = Math.max(0, blockingRequestCount - 1);
+      publishBlockingRequestState();
+    }
   }
   if (!response.ok) {
     const raw = await response.text().catch(() => '');
@@ -67,41 +82,41 @@ export const teaApi = {
 
   getMembers: (includeInactive = false) => api(`/members${includeInactive ? '?includeInactive=true' : ''}`),
   getMe: () => api('/members/me'),
-  updateMe: (payload) => api('/members/me', { method: 'PUT', body: JSON.stringify(payload) }),
+  updateMe: (payload) => api('/members/me', { method: 'PUT', body: JSON.stringify(payload), blocking: true }),
   uploadAvatar: (image) => {
     const formData = new FormData();
     formData.append('image', image);
-    return api('/members/me/avatar', { method: 'POST', body: formData });
+    return api('/members/me/avatar', { method: 'POST', body: formData, blocking: true });
   },
-  createMember: (payload) => api('/members', { method: 'POST', body: JSON.stringify(payload) }),
-  updateMember: (id, payload) => api(`/members/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
-  deleteMember: (id) => api(`/members/${id}`, { method: 'DELETE' }),
+  createMember: (payload) => api('/members', { method: 'POST', body: JSON.stringify(payload), blocking: true }),
+  updateMember: (id, payload) => api(`/members/${id}`, { method: 'PUT', body: JSON.stringify(payload), blocking: true }),
+  deleteMember: (id) => api(`/members/${id}`, { method: 'DELETE', blocking: true }),
 
   getDrinks: (includeInactive = false) => api(`/drinks${includeInactive ? '?includeInactive=true' : ''}`),
-  createDrink: (payload) => api('/drinks', { method: 'POST', body: JSON.stringify(payload) }),
-  updateDrink: (id, payload) => api(`/drinks/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
-  deleteDrink: (id) => api(`/drinks/${id}`, { method: 'DELETE' }),
+  createDrink: (payload) => api('/drinks', { method: 'POST', body: JSON.stringify(payload), blocking: true }),
+  updateDrink: (id, payload) => api(`/drinks/${id}`, { method: 'PUT', body: JSON.stringify(payload), blocking: true }),
+  deleteDrink: (id) => api(`/drinks/${id}`, { method: 'DELETE', blocking: true }),
 
   getToday: (date) => api(`/attendances/daily-summary${date ? `?date=${date}` : ''}`),
   getExpensesRange: (from, to) => api(`/expenses/range?from=${from}&to=${to}`),
-  createExpense: (payload) => api('/expenses', { method: 'POST', body: JSON.stringify(payload) }),
-  updateExpense: (expenseId, payload) => api(`/expenses/${expenseId}`, { method: 'PUT', body: JSON.stringify(payload) }),
-  createAttendance: (payload) => api('/attendances', { method: 'POST', body: JSON.stringify(payload) }),
-  deleteQuickAttendance: (expenseId) => api(`/expenses/${expenseId}`, { method: 'DELETE' }),
+  createExpense: (payload) => api('/expenses', { method: 'POST', body: JSON.stringify(payload), blocking: true }),
+  updateExpense: (expenseId, payload) => api(`/expenses/${expenseId}`, { method: 'PUT', body: JSON.stringify(payload), blocking: true }),
+  createAttendance: (payload) => api('/attendances', { method: 'POST', body: JSON.stringify(payload), blocking: true }),
+  deleteQuickAttendance: (expenseId) => api(`/expenses/${expenseId}`, { method: 'DELETE', blocking: true }),
   getAttendanceSettings: () => api('/attendance-settings'),
-  updateAttendanceSettings: (payload) => api('/attendance-settings', { method: 'PUT', body: JSON.stringify(payload) }),
+  updateAttendanceSettings: (payload) => api('/attendance-settings', { method: 'PUT', body: JSON.stringify(payload), blocking: true }),
   getFavoriteDrinks: () => api('/members/me/favorite-drinks'),
-  addFavoriteDrink: (drinkId) => api(`/members/me/favorite-drinks/${drinkId}`, { method: 'PUT' }),
-  removeFavoriteDrink: (drinkId) => api(`/members/me/favorite-drinks/${drinkId}`, { method: 'DELETE' }),
+  addFavoriteDrink: (drinkId) => api(`/members/me/favorite-drinks/${drinkId}`, { method: 'PUT', blocking: true }),
+  removeFavoriteDrink: (drinkId) => api(`/members/me/favorite-drinks/${drinkId}`, { method: 'DELETE', blocking: true }),
 
   getWeekSettlement: (weekStart) => api(`/weeks/${weekStart}/settlement`),
   calculateWeekSettlement: (weekStart) => api(`/weeks/${weekStart}/settlement/calculate`, { method: 'POST' }),
   finalizeWeekSettlement: (weekStart) => api(`/weeks/${weekStart}/settlement/finalize`, { method: 'POST' }),
   getPaymentQr: (transferId) => api(`/settlement-transfers/${transferId}/payment-qr`),
-  markTransferPaid: (transferId) => api(`/settlement-transfers/${transferId}/mark-paid`, { method: 'POST' }),
+  markTransferPaid: (transferId) => api(`/settlement-transfers/${transferId}/mark-paid`, { method: 'POST', blocking: true }),
   getNotifications: () => api('/notifications'),
-  markNotificationRead: (notificationId) => api(`/notifications/${notificationId}/read`, { method: 'PATCH' }),
-  deleteNotification: (notificationId) => api(`/notifications/${notificationId}`, { method: 'DELETE' }),
+  markNotificationRead: (notificationId) => api(`/notifications/${notificationId}/read`, { method: 'PATCH', blocking: true }),
+  deleteNotification: (notificationId) => api(`/notifications/${notificationId}`, { method: 'DELETE', blocking: true }),
 
   getMessages: ({ before, afterId, limit = 30 } = {}) => {
     const parameters = new URLSearchParams({ limit: String(limit) });
@@ -117,23 +132,23 @@ export const teaApi = {
   getChatUnread: () => api('/chat/messages/unread-count'),
   getChatReadStates: () => api('/chat/messages/read-states'),
   markChatRead: () => api('/chat/messages/read', { method: 'PATCH' }),
-  sendMessage: (payload) => api('/chat/messages', { method: 'POST', body: JSON.stringify(payload) }),
+  sendMessage: (payload) => api('/chat/messages', { method: 'POST', body: JSON.stringify(payload), blocking: true }),
   sendMessageWithMedia: ({ senderMemberId, content, replyToMessageId, images }) => {
     const formData = new FormData();
     formData.append('senderMemberId', String(senderMemberId));
     if (content) formData.append('content', content);
     if (replyToMessageId) formData.append('replyToMessageId', String(replyToMessageId));
     images.forEach((image) => formData.append('images', image));
-    return api('/chat/messages/with-media', { method: 'POST', body: formData });
+    return api('/chat/messages/with-media', { method: 'POST', body: formData, blocking: true });
   },
-  deleteMessage: (messageId) => api(`/chat/messages/${messageId}`, { method: 'DELETE' }),
-  clearGroupChat: () => api('/chat/messages', { method: 'DELETE' }),
+  deleteMessage: (messageId) => api(`/chat/messages/${messageId}`, { method: 'DELETE', blocking: true }),
+  clearGroupChat: () => api('/chat/messages', { method: 'DELETE', blocking: true }),
   getTypingMembers: () => api('/chat/typing'),
   setTyping: (typing) => api('/chat/typing', { method: 'PUT', body: JSON.stringify({ typing }) }),
-  toggleReaction: (messageId, emoji) => api(`/chat/messages/${messageId}/reactions`, { method: 'POST', body: JSON.stringify({ emoji }) }),
+  toggleReaction: (messageId, emoji) => api(`/chat/messages/${messageId}/reactions`, { method: 'POST', body: JSON.stringify({ emoji }), blocking: true }),
 
   getWeeklyNotificationSettings: () => api('/admin/weekly-notification-settings'),
   updateWeeklyNotificationSettings: (payload) => api('/admin/weekly-notification-settings', {
-    method: 'PUT', body: JSON.stringify(payload),
+    method: 'PUT', body: JSON.stringify(payload), blocking: true,
   }),
 };

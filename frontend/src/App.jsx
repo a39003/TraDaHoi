@@ -25,6 +25,33 @@ const calendarRange = (month) => {
   return { start: isoDate(start), end: isoDate(end) };
 };
 const initials = (name) => String(name || '?').split(/\s+/).filter(Boolean).slice(-2).map((part) => part[0]).join('').toUpperCase();
+let notificationAudioContext = null;
+
+function unlockNotificationSound() {
+  try {
+    const AudioApi = window.AudioContext || window.webkitAudioContext;
+    if (!AudioApi) return;
+    notificationAudioContext ||= new AudioApi();
+    if (notificationAudioContext.state === 'suspended') void notificationAudioContext.resume();
+  } catch {
+    // A device/browser without Web Audio simply keeps visual notifications.
+  }
+}
+
+function playNotificationSound() {
+  if (!notificationAudioContext || notificationAudioContext.state !== 'running') return;
+  const now = notificationAudioContext.currentTime;
+  [880, 1_175].forEach((frequency, index) => {
+    const oscillator = notificationAudioContext.createOscillator();
+    const gain = notificationAudioContext.createGain();
+    oscillator.type = 'sine'; oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.0001, now + index * 0.13);
+    gain.gain.exponentialRampToValueAtTime(0.09, now + index * 0.13 + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.13 + 0.16);
+    oscillator.connect(gain).connect(notificationAudioContext.destination);
+    oscillator.start(now + index * 0.13); oscillator.stop(now + index * 0.13 + 0.18);
+  });
+}
 
 function readStoredUser() {
   try { return JSON.parse(window.localStorage.getItem('tea-session-user') || 'null'); }
@@ -113,10 +140,12 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
   const [attendanceEdit, setAttendanceEdit] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [apiBusy, setApiBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const lastAlertUnreadCount = useRef(0);
   const lastChatMessageId = useRef(0);
   const lastFullChatSyncAt = useRef(0);
+  const knownNotificationIds = useRef(null);
   const [calendarMonth, setCalendarMonth] = useState(monthValue);
   const weekStart = monday();
   const weekEnd = useMemo(() => {
@@ -145,6 +174,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       ]);
       setMessages(chatData); setNotifications(notificationData); setChatUnreadCount(chatUnread.unreadCount || 0);
       lastAlertUnreadCount.current = chatUnread.unreadCount || 0;
+      knownNotificationIds.current = new Set(notificationData.map((notification) => notification.id));
       lastChatMessageId.current = Math.max(0, ...chatData.map((message) => message.id || 0));
       lastFullChatSyncAt.current = Date.now();
       setSettlement(settlementData);
@@ -159,18 +189,24 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
         teaApi.getNotifications(), teaApi.getChatUnread(),
       ]);
       const unreadCount = chatUnread.unreadCount || 0;
+      const nextNotificationIds = new Set(notificationData.map((notification) => notification.id));
+      const hasNewSystemNotification = knownNotificationIds.current !== null
+        && notificationData.some((notification) => !knownNotificationIds.current.has(notification.id));
+      const hasNewChatMessage = unreadCount > lastAlertUnreadCount.current;
       setNotifications(notificationData); setChatUnreadCount(unreadCount);
 
       // Only fetch message previews for the notification bell when a new chat
       // notification actually arrives. Previously this downloaded 50 messages
       // every five seconds even while the chat screen was closed.
-      if (unreadCount > lastAlertUnreadCount.current) {
+      if (hasNewChatMessage) {
         const latestMessages = await teaApi.getMessages({ limit: 6 });
         setMessages((current) => [...new Map([...current, ...latestMessages].map((message) => [message.id, message])).values()]
           .sort((first, second) => new Date(first.createdAt) - new Date(second.createdAt))
           .slice(-50));
       }
+      if (hasNewChatMessage || hasNewSystemNotification) playNotificationSound();
       lastAlertUnreadCount.current = unreadCount;
+      knownNotificationIds.current = nextNotificationIds;
     } catch {
       // Giữ dữ liệu hiện tại nếu lần kiểm tra thông báo nền bị gián đoạn.
     }
@@ -256,6 +292,17 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
+    const unlock = () => unlockNotificationSound();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    return () => { window.removeEventListener('pointerdown', unlock); window.removeEventListener('keydown', unlock); };
+  }, []);
+  useEffect(() => {
+    const updateBusy = (event) => setApiBusy(Number(event.detail?.pending || 0) > 0);
+    window.addEventListener('tea-api-busy', updateBusy);
+    return () => window.removeEventListener('tea-api-busy', updateBusy);
+  }, []);
+  useEffect(() => {
     const id = window.setInterval(refreshAlerts, 5000);
     return () => window.clearInterval(id);
   }, [refreshAlerts]);
@@ -283,7 +330,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   }, [members, weekRecords]);
   const titles = { attendance: 'Điểm danh hôm nay', week: 'Lịch uống nước', settlement: 'Tổng kết tuần', chat: 'Trò chuyện', profile: 'Tài khoản', admin: 'Quản trị nhóm' };
 
-  return <div className="tea-app">
+  return <div className={`tea-app ${apiBusy ? 'api-busy' : ''}`} aria-busy={apiBusy}>
     <aside className="app-sidebar">
       <div className="logo">🥤 <span>Trà Đá Hội<small>{isAdmin ? 'Admin' : 'Thành viên'}</small></span></div>
       <nav>
@@ -311,6 +358,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       </>}
     </main>
     {notice && <div className="toast">{notice}</div>}
+    {apiBusy && <div className="api-busy-overlay" role="status" aria-live="polite"><span /><b>Đang xử lý...</b></div>}
   </div>;
 }
 

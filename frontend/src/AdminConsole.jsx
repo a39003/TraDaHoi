@@ -24,22 +24,24 @@ export default function AdminConsole({ members, drinks, currentUser, onSaved, fl
 
 function DrinkManager({ drinks, onSaved, flash }) {
   const [newDrink, setNewDrink] = useState({ name: '', price: '', icon: '🥤' });
+  const [adding, setAdding] = useState(false);
   const add = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); if (adding) return; setAdding(true);
     try {
       const createdDrink = await teaApi.createDrink({ ...newDrink, price: Number(newDrink.price), active: true });
       setNewDrink({ name: '', price: '', icon: '🥤' });
       flash('Đã thêm đồ uống.');
       onSaved({ kind: 'drink', type: 'upsert', item: createdDrink });
     } catch (error) { flash(error.message || 'Không thể thêm đồ uống.'); }
+    finally { setAdding(false); }
   };
   return <section className="panel admin-drink-panel">
     <div className="panel-title"><span>🥤</span><div><h2>Danh sách đồ uống</h2><p>Chọn biểu tượng, đặt tên và giá cố định dùng khi thành viên điểm danh.</p></div></div>
     <form className="admin-create-row" onSubmit={add}>
       <IconPicker value={newDrink.icon} onChange={(icon) => setNewDrink({ ...newDrink, icon })} label="Chọn icon cho đồ uống mới" />
-      <input required value={newDrink.name} onChange={(event) => setNewDrink({ ...newDrink, name: event.target.value })} placeholder="Tên đồ uống" />
-      <input required type="number" min="0" step="1000" value={newDrink.price} onChange={(event) => setNewDrink({ ...newDrink, price: event.target.value })} placeholder="Giá tiền" />
-      <button className="primary">Thêm đồ uống</button>
+      <input required disabled={adding} value={newDrink.name} onChange={(event) => setNewDrink({ ...newDrink, name: event.target.value })} placeholder="Tên đồ uống" />
+      <input required disabled={adding} type="number" min="0" step="1000" value={newDrink.price} onChange={(event) => setNewDrink({ ...newDrink, price: event.target.value })} placeholder="Giá tiền" />
+      <button className="primary" disabled={adding}>{adding ? 'Đang thêm...' : 'Thêm đồ uống'}</button>
     </form>
     <div className="admin-list">{drinks.map((drink) => <DrinkRow key={drink.id} drink={drink} onSaved={onSaved} flash={flash} />)}</div>
   </section>;
@@ -66,31 +68,36 @@ function IconPicker({ value, onChange, label }) {
 
 function DrinkRow({ drink, onSaved, flash }) {
   const [editing, setEditing] = useState(false);
+  const [working, setWorking] = useState(false);
   const [form, setForm] = useState(drinkForm(drink));
   useEffect(() => setForm(drinkForm(drink)), [drink]);
   const save = async () => {
+    if (working) return; setWorking(true);
     try {
       const updatedDrink = await teaApi.updateDrink(drink.id, { ...form, price: Number(form.price) });
       setEditing(false); flash('Đã cập nhật đồ uống.'); onSaved({ kind: 'drink', type: 'upsert', item: updatedDrink });
     } catch (error) { flash(error.message || 'Không thể sửa đồ uống.'); }
+    finally { setWorking(false); }
   };
   const remove = async () => {
     if (!window.confirm(`Bạn có chắc muốn xóa "${drink.name}" khỏi danh sách đồ uống không?`)) return;
+    if (working) return; setWorking(true);
     try { await teaApi.deleteDrink(drink.id); flash('Đã xóa đồ uống.'); onSaved({ kind: 'drink', type: 'delete', id: drink.id }); }
     catch (error) { flash(error.message || 'Không thể xóa đồ uống.'); }
+    finally { setWorking(false); }
   };
   return <article className={`admin-row drink-admin-row ${!drink.active ? 'inactive' : ''}`}>
     {editing ? <>
       <IconPicker value={form.icon} onChange={(icon) => setForm({ ...form, icon })} label={`Chọn icon cho ${drink.name}`} />
-      <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
-      <input type="number" min="0" step="1000" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} />
-      <label className="mini-check"><input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} /> Đang dùng</label>
-      <div className="row-actions"><button type="button" className="primary small" onClick={save}>Lưu</button><button type="button" className="outline small" onClick={() => { setForm(drinkForm(drink)); setEditing(false); }}>Hủy</button></div>
+      <input disabled={working} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+      <input disabled={working} type="number" min="0" step="1000" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} />
+      <label className="mini-check"><input disabled={working} type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} /> Đang dùng</label>
+      <div className="row-actions"><button type="button" disabled={working} className="primary small" onClick={save}>{working ? 'Đang lưu...' : 'Lưu'}</button><button type="button" disabled={working} className="outline small" onClick={() => { setForm(drinkForm(drink)); setEditing(false); }}>Hủy</button></div>
     </> : <>
       <span className="row-icon">{drink.icon || '🥤'}</span>
       <div className="row-main"><strong>{drink.name}</strong><small><i className={`status-dot ${drink.active ? '' : 'off'}`} />{drink.active ? 'Đang hiển thị khi điểm danh' : 'Đã ẩn'}</small></div>
       <b>{money(drink.price)}</b>
-      <div className="row-actions"><button className="outline small" onClick={() => setEditing(true)}>✎ Sửa</button><button className="danger small" onClick={remove}>Xóa</button></div>
+      <div className="row-actions"><button disabled={working} className="outline small" onClick={() => setEditing(true)}>✎ Sửa</button><button disabled={working} className="danger small" onClick={remove}>{working ? 'Đang xóa...' : 'Xóa'}</button></div>
     </>}
   </article>;
 }
@@ -145,26 +152,30 @@ function MemberManager({ members, currentUser, onSaved, flash }) {
 
 function MemberRow({ member, isCurrent, onSaved, flash }) {
   const [open, setOpen] = useState(false);
+  const [working, setWorking] = useState(false);
   const [form, setForm] = useState(memberForm(member));
   useEffect(() => setForm(memberForm(member)), [member]);
   const set = (field) => (event) => setForm({ ...form, [field]: event.target.type === 'checkbox' ? event.target.checked : event.target.value });
   const save = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); if (working) return; setWorking(true);
     try { const updatedMember = await teaApi.updateMember(member.id, form); flash('Đã cập nhật thành viên.'); setOpen(false); onSaved({ kind: 'member', type: 'upsert', item: updatedMember }); }
     catch (error) { flash(error.message || 'Không thể cập nhật thành viên.'); }
+    finally { setWorking(false); }
   };
   const remove = async () => {
     if (isCurrent) return flash('Bạn không thể xóa chính tài khoản đang đăng nhập.');
     if (!window.confirm(`Bạn có chắc muốn XÓA VĨNH VIỄN tài khoản của ${member.displayName} không? Điểm danh, chat và dữ liệu liên quan của thành viên này cũng sẽ bị xóa và không thể khôi phục.`)) return;
+    if (working) return; setWorking(true);
     try { await teaApi.deleteMember(member.id); flash('Đã xóa vĩnh viễn thành viên khỏi hệ thống.'); onSaved({ kind: 'member', type: 'delete', id: member.id }); }
     catch (error) { flash(error.message || 'Không thể xóa thành viên.'); }
+    finally { setWorking(false); }
   };
   return <article className={`member-admin-card ${!member.active ? 'inactive' : ''} ${open ? 'editing' : ''}`}>
     <div className="member-card-main">
       <MemberAvatar member={member} />
       <div className="member-identity"><div><strong>{member.displayName}</strong>{isCurrent && <span className="you-badge">Bạn</span>}</div><small>{member.email || 'Chưa có email'}</small></div>
       <div className="member-badges"><span className={`account-status ${member.active ? 'active' : 'locked'}`}><i />{member.active ? 'Hoạt động' : 'Đã khóa'}</span><span className={member.role === 'ADMIN' ? 'role admin' : 'role'}>{member.role === 'ADMIN' ? 'Quản trị viên' : 'Thành viên'}</span></div>
-      <button type="button" className={`member-edit-toggle ${open ? 'active' : ''}`} onClick={() => setOpen(!open)}>{open ? 'Thu gọn ↑' : 'Chỉnh sửa ✎'}</button>
+      <button type="button" disabled={working} className={`member-edit-toggle ${open ? 'active' : ''}`} onClick={() => setOpen(!open)}>{open ? 'Thu gọn ↑' : 'Chỉnh sửa ✎'}</button>
     </div>
     <div className="member-bank-preview">
       <span><small>Ngân hàng</small><b>{member.bankName || 'Chưa cập nhật'}</b></span>
@@ -180,7 +191,7 @@ function MemberRow({ member, isCurrent, onSaved, flash }) {
       <label>Số tài khoản<input value={form.accountNumber} onChange={set('accountNumber')} /></label>
       <label>Chủ tài khoản<input value={form.accountName} onChange={set('accountName')} /></label>
       <label className="member-active-switch"><input type="checkbox" checked={form.active} onChange={set('active')} /><span /><b>Tài khoản hoạt động</b></label>
-      <div className="form-actions"><button className="primary">Lưu thay đổi</button><button type="button" className="danger" onClick={remove}>Xóa vĩnh viễn tài khoản</button></div>
+      <div className="form-actions"><button className="primary" disabled={working}>{working ? 'Đang lưu...' : 'Lưu thay đổi'}</button><button type="button" disabled={working} className="danger" onClick={remove}>{working ? 'Đang xử lý...' : 'Xóa vĩnh viễn tài khoản'}</button></div>
     </form>}
   </article>;
 }
