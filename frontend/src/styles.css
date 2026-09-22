@@ -472,6 +472,11 @@ legend { padding: 0 7px; color: var(--green); font-weight: 800; }
 .today-order-items strong { font-size: 10px; }
 .today-order-items small { color: var(--muted); font-size: 9px; }
 .today-order-items b { font-size: 10px; }
+.shared-companions { display: grid; gap: 6px; padding: 10px 0 1px; }
+.shared-companions > small { color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.shared-companions > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.shared-companions > div > span { display: inline-flex; gap: 5px; align-items: center; max-width: 100%; padding: 4px 7px 4px 4px; color: #31664d; border-radius: 999px; background: var(--mint); font-size: 9px; font-weight: 700; }
+.shared-companions .avatar { width: 22px; height: 22px; font-size: 7px; }
 .today-order-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 11px; }
 .attendance-settings-panel { max-width: 720px; }
 .attendance-settings-form { display: grid; width: 100%; min-width: 0; grid-template-columns: minmax(180px, 240px) minmax(240px, 1fr) auto; gap: 14px; align-items: end; }

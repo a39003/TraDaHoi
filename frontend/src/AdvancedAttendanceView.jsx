@@ -188,8 +188,14 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
         const canChange = isAdmin || expense.createdBy?.id === user.id;
         const canEditShape = expense.splitMode === 'EVEN' || new Set(expense.items.map((item) => item.consumer.id)).size === 1;
         const visibleItems = isAdmin ? expense.items : expense.items.filter((item) => item.consumer.id === user.id);
+        const sharedCompanions = expense.splitMode === 'EVEN' && !isAdmin
+          ? [...new Map(expense.items
+            .filter((item) => item.consumer.id !== user.id)
+            .map((item) => [item.consumer.id, item.consumer])).values()]
+          : [];
         return <article className="today-order" key={expense.id}>
           <div className="today-order-head"><div><strong>Điểm danh lần {expenseIndex + 1} · {weekdayLabel()}</strong><span>{expense.splitMode === 'EVEN' ? 'Uống chung chia đều' : expense.items.length > 1 ? 'Nhiều đồ uống' : 'Cá nhân'} · {expense.payer.displayName} trả</span></div><b>{money(visibleItems.reduce((sum, item) => sum + item.lineTotal, 0))}</b></div>
+          {sharedCompanions.length > 0 && <div className="shared-companions"><small>Uống chung với</small><div>{sharedCompanions.map((member) => <span key={member.id}><Avatar member={member} />{member.displayName}</span>)}</div></div>}
           <div className="today-order-items">{visibleItems.map((item) => <div key={item.id}><Avatar member={item.consumer} /><span><strong>{item.consumer.displayName}</strong><small>{item.drinkName} × {item.quantity}</small></span><b>{money(item.lineTotal)}</b></div>)}</div>
           {canChange && (!locked || isAdmin) && <div className="today-order-actions">{canEditShape && <button type="button" className="outline small" disabled={cancellingId !== null} onClick={() => edit(expense)}>✎ Sửa</button>}<button type="button" className="danger small" disabled={cancellingId !== null} onClick={() => cancelAttendance(expense)}>{cancellingId === expense.id ? 'Đang hủy...' : 'Hủy điểm danh'}</button></div>}
         </article>;
