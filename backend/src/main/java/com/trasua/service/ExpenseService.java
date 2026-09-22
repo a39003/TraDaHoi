@@ -23,9 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class ExpenseService {
@@ -80,6 +82,7 @@ public class ExpenseService {
     public ExpenseResponse createExpense(ExpenseRequest request, Member actor) {
         assertWeekOpen(request.orderDate());
         assertDailyEditable(request.orderDate(), actor);
+        assertNoDuplicateAttendance(request, null);
         DrinkOrder order = build(request, new DrinkOrder());
         order.setCreatedBy(actor);
         orders.save(order);
@@ -95,6 +98,7 @@ public class ExpenseService {
         assertOwnerOrAdmin(order, actor);
         assertDailyEditable(order.getOrderDate(), actor);
         assertDailyEditable(request.orderDate(), actor);
+        assertNoDuplicateAttendance(request, order.getId());
         build(request, order);
         return ApiMapper.expense(order);
     }
@@ -147,6 +151,33 @@ public class ExpenseService {
         order.setTotalAmount(total);
         order.replaceItems(items);
         return order;
+    }
+
+    /**
+     * One member may order several drinks in one order, but may not be added
+     * to another order on the same date. This also protects the API when two
+     * members submit from different devices.
+     */
+    private void assertNoDuplicateAttendance(ExpenseRequest request, Long excludedOrderId) {
+        Set<Long> requestedMemberIds = new LinkedHashSet<>();
+        for (ExpenseItemRequest item : request.items()) {
+            requestedMemberIds.add(item.consumerMemberId());
+        }
+
+        Set<String> duplicatedMembers = new LinkedHashSet<>();
+        for (DrinkOrder dayOrder : orders.findDetailedByOrderDate(request.orderDate())) {
+            if (excludedOrderId != null && excludedOrderId.equals(dayOrder.getId())) continue;
+            for (OrderItem existingItem : dayOrder.getItems()) {
+                if (requestedMemberIds.contains(existingItem.getConsumer().getId())) {
+                    duplicatedMembers.add(existingItem.getConsumer().getDisplayName());
+                }
+            }
+        }
+
+        if (!duplicatedMembers.isEmpty()) {
+            throw new BusinessRuleException("Thành viên " + String.join(", ", duplicatedMembers)
+                    + " đã được điểm danh trong ngày này. Hãy xem hoặc sửa đơn đã có thay vì tạo thêm.");
+        }
     }
 
     private void validateCatalogPrices(List<ExpenseItemRequest> items, String splitMode) {

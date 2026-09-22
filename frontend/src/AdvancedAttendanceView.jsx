@@ -36,6 +36,9 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   }, []);
 
   const orderedDrinks = useMemo(() => [...drinks].sort((a, b) => Number(favorites.includes(b.id)) - Number(favorites.includes(a.id)) || a.name.localeCompare(b.name, 'vi')), [drinks, favorites]);
+  const existingOwnAttendance = useMemo(() => todayExpenses.find((expense) => expense.items
+    .some((item) => item.consumer.id === user.id)), [todayExpenses, user.id]);
+  const preventDuplicateEntry = !isAdmin && !editingId && Boolean(existingOwnAttendance);
   const selectedTotal = lines.reduce((sum, line) => {
     const drink = drinks.find((item) => String(item.id) === line.drinkId);
     return sum + (drink?.price || 0) * Math.max(1, Number(line.quantity || 1));
@@ -103,6 +106,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   const save = async (event) => {
     event.preventDefault();
     if (locked) return flash(`Điểm danh đã khóa lúc ${String(settings.cutoffTime).slice(0, 5)}.`);
+    if (preventDuplicateEntry) return flash('Bạn đã được điểm danh hôm nay. Hãy xem đơn hiện có thay vì tạo thêm.');
     setSaving(true);
     try {
       const items = buildItems();
@@ -158,27 +162,28 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
     <section className="panel attendance-form advanced-attendance-form">
       <div className="panel-title"><span>📝</span><div><h2>{editingId ? `Sửa điểm danh ${weekdayLabel()}` : `Điểm danh ${weekdayLabel()}`}</h2><p>Chọn một hoặc nhiều đồ uống, sau đó chọn người đã trả tiền.</p></div></div>
       {settings && <div className={`cutoff-banner ${settings.locked ? 'locked' : ''}`}><span>{settings.locked ? '🔒' : '⏱️'}</span><div><strong>{settings.locked && !isAdmin ? 'Đã khóa điểm danh' : `Giờ khóa: ${String(settings.cutoffTime).slice(0, 5)}`}</strong><small>{isAdmin && settings.locked ? 'Admin vẫn có thể điều chỉnh.' : 'Có thể sửa hoặc hủy trước giờ khóa.'}</small></div></div>}
+      {preventDuplicateEntry && <div className="duplicate-attendance-banner" role="status"><span>✓</span><div><strong>Bạn đã được điểm danh hôm nay</strong><p>{existingOwnAttendance.createdBy?.id === user.id ? 'Bạn đã tạo đơn này.' : `${existingOwnAttendance.createdBy?.displayName || 'Một thành viên'} đã thêm bạn vào đơn uống chung.`} Không thể tạo thêm điểm danh trùng.</p></div><button type="button" className="outline small" onClick={() => document.getElementById('my-today-attendance')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Xem đơn</button></div>}
       <div className="split-mode-tabs">
-        <button type="button" className={mode === 'PERSONAL' ? 'active' : ''} onClick={() => changeMode('PERSONAL')}>Cá nhân</button>
-        <button type="button" className={mode === 'EVEN' ? 'active' : ''} onClick={() => changeMode('EVEN')}>Chia đều</button>
+        <button type="button" disabled={preventDuplicateEntry} className={mode === 'PERSONAL' ? 'active' : ''} onClick={() => changeMode('PERSONAL')}>Cá nhân</button>
+        <button type="button" disabled={preventDuplicateEntry} className={mode === 'EVEN' ? 'active' : ''} onClick={() => changeMode('EVEN')}>Chia đều</button>
       </div>
-      {favorites.length > 0 && <div className="favorite-shortcuts"><span>Chọn nhanh:</span>{orderedDrinks.filter((drink) => favorites.includes(drink.id)).map((drink) => <button type="button" key={drink.id} onClick={() => chooseFavorite(drink.id)}>{drink.icon || '🥤'} {drink.name}</button>)}</div>}
+      {favorites.length > 0 && <div className="favorite-shortcuts"><span>Chọn nhanh:</span>{orderedDrinks.filter((drink) => favorites.includes(drink.id)).map((drink) => <button type="button" disabled={preventDuplicateEntry} key={drink.id} onClick={() => chooseFavorite(drink.id)}>{drink.icon || '🥤'} {drink.name}</button>)}</div>}
       <form onSubmit={save} className="stack-form">
         <div className="drink-line-list">{lines.map((line, index) => <div className="drink-line" key={line.key}>
-          <button type="button" className={`favorite-toggle ${favorites.includes(Number(line.drinkId)) ? 'active' : ''}`} onClick={() => line.drinkId && toggleFavorite(Number(line.drinkId))} title="Đồ uống yêu thích">{favorites.includes(Number(line.drinkId)) ? '★' : '☆'}</button>
-          <label><span>Món {index + 1}</span><select required value={line.drinkId} onChange={(event) => updateLine(line.key, 'drinkId', event.target.value)}><option value="">Chọn đồ uống</option>{orderedDrinks.map((drink) => <option key={drink.id} value={drink.id}>{favorites.includes(drink.id) ? '★ ' : ''}{drink.icon || '🥤'} {drink.name} — {money(drink.price)}</option>)}</select></label>
-          <label className="quantity-field"><span>Số lượng</span><input type="number" min="1" max="20" value={line.quantity} onChange={(event) => updateLine(line.key, 'quantity', event.target.value)} /></label>
-          <button type="button" className="remove-line" disabled={lines.length === 1} onClick={() => removeLine(line.key)} aria-label="Bỏ món">×</button>
+          <button type="button" className={`favorite-toggle ${favorites.includes(Number(line.drinkId)) ? 'active' : ''}`} disabled={preventDuplicateEntry} onClick={() => line.drinkId && toggleFavorite(Number(line.drinkId))} title="Đồ uống yêu thích">{favorites.includes(Number(line.drinkId)) ? '★' : '☆'}</button>
+          <label><span>Món {index + 1}</span><select required disabled={preventDuplicateEntry} value={line.drinkId} onChange={(event) => updateLine(line.key, 'drinkId', event.target.value)}><option value="">Chọn đồ uống</option>{orderedDrinks.map((drink) => <option key={drink.id} value={drink.id}>{favorites.includes(drink.id) ? '★ ' : ''}{drink.icon || '🥤'} {drink.name} — {money(drink.price)}</option>)}</select></label>
+          <label className="quantity-field"><span>Số lượng</span><input type="number" disabled={preventDuplicateEntry} min="1" max="20" value={line.quantity} onChange={(event) => updateLine(line.key, 'quantity', event.target.value)} /></label>
+          <button type="button" className="remove-line" disabled={preventDuplicateEntry || lines.length === 1} onClick={() => removeLine(line.key)} aria-label="Bỏ món">×</button>
         </div>)}</div>
-        <button type="button" className="outline add-drink-line" onClick={addLine}>＋ Thêm đồ uống</button>
-        {mode === 'EVEN' && <fieldset><legend>Chia đều cho những ai?</legend><div className="member-checks">{members.map((member) => <label key={member.id} className="check-row"><input type="checkbox" checked={sharedMembers.includes(member.id)} onChange={() => toggleSharedMember(member.id)} />{member.displayName}</label>)}</div><p className="split-note">Tổng {money(selectedTotal)} · Mỗi người khoảng {money(Math.floor(selectedTotal / Math.max(1, sharedMembers.length)))}</p></fieldset>}
-        <label>Người đã trả tiền<select value={payerId} onChange={(event) => setPayerId(event.target.value)}>{members.map((member) => <option key={member.id} value={member.id}>{member.displayName}</option>)}</select></label>
+        <button type="button" className="outline add-drink-line" disabled={preventDuplicateEntry} onClick={addLine}>＋ Thêm đồ uống</button>
+        {mode === 'EVEN' && <fieldset disabled={preventDuplicateEntry}><legend>Chia đều cho những ai?</legend><div className="member-checks">{members.map((member) => <label key={member.id} className="check-row"><input type="checkbox" checked={sharedMembers.includes(member.id)} onChange={() => toggleSharedMember(member.id)} />{member.displayName}</label>)}</div><p className="split-note">Tổng {money(selectedTotal)} · Mỗi người khoảng {money(Math.floor(selectedTotal / Math.max(1, sharedMembers.length)))}</p></fieldset>}
+        <label>Người đã trả tiền<select disabled={preventDuplicateEntry} value={payerId} onChange={(event) => setPayerId(event.target.value)}>{members.map((member) => <option key={member.id} value={member.id}>{member.displayName}</option>)}</select></label>
         <div className="attendance-total"><span>Tổng đơn</span><strong>{money(selectedTotal)}</strong></div>
-        <div className="attendance-actions"><button className="primary" disabled={saving || locked || !lines.length}>{saving ? 'Đang lưu...' : editingId ? 'Lưu thay đổi' : 'Xác nhận điểm danh'}</button>{editingId && <button type="button" className="outline" onClick={reset}>Hủy sửa</button>}</div>
+        <div className="attendance-actions"><button className="primary" disabled={saving || locked || preventDuplicateEntry || !lines.length}>{saving ? 'Đang lưu...' : preventDuplicateEntry ? 'Đã điểm danh hôm nay' : editingId ? 'Lưu thay đổi' : 'Xác nhận điểm danh'}</button>{editingId && <button type="button" className="outline" onClick={reset}>Hủy sửa</button>}</div>
       </form>
     </section>
 
-    <section className="panel today-orders"><div className="panel-title"><span>☀️</span><div><h2>{isAdmin ? 'Chi tiết hôm nay' : 'Điểm danh của bạn hôm nay'}</h2><p>{todayExpenses.length} đơn đã ghi nhận</p></div></div>
+    <section className="panel today-orders" id="my-today-attendance"><div className="panel-title"><span>☀️</span><div><h2>{isAdmin ? 'Chi tiết hôm nay' : 'Điểm danh của bạn hôm nay'}</h2><p>{todayExpenses.length} đơn đã ghi nhận</p></div></div>
       {todayExpenses.length === 0 ? <p className="empty">Chưa có lượt điểm danh.</p> : <div className="today-order-list">{todayExpenses.map((expense, expenseIndex) => {
         const canChange = isAdmin || expense.createdBy?.id === user.id;
         const canEditShape = expense.splitMode === 'EVEN' || new Set(expense.items.map((item) => item.consumer.id)).size === 1;

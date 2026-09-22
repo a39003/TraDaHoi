@@ -40,17 +40,19 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   const [clearingGroup, setClearingGroup] = useState(false);
   const [deletingNotificationId, setDeletingNotificationId] = useState(null);
   const [hiddenMessageIds, setHiddenMessageIds] = useState(() => new Set());
+  const [pendingMessages, setPendingMessages] = useState([]);
   const fileRef = useRef(null);
   const scrollRef = useRef(null);
   const lastTypingAt = useRef(0);
   const chatRefreshRunning = useRef(false);
+  const pendingPreviewUrls = useRef(new Set());
 
   const allMessages = useMemo(() => {
-    const unique = new Map([...olderMessages, ...messages].map((message) => [message.id, message]));
+    const unique = new Map([...olderMessages, ...messages, ...pendingMessages].map((message) => [message.id, message]));
     return [...unique.values()]
       .filter((message) => !hiddenMessageIds.has(message.id))
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-  }, [olderMessages, messages, hiddenMessageIds]);
+  }, [olderMessages, messages, pendingMessages, hiddenMessageIds]);
   const displayedMessages = searchActive ? searchResults : allMessages;
   const mentionMatch = text.match(/@([^@\n]*)$/);
   const mentionSuggestions = mentionMatch ? members.filter((member) => member.id !== user.id && member.displayName.toLocaleLowerCase('vi').includes(mentionMatch[1].trim().toLocaleLowerCase('vi'))).slice(0, 6) : [];
@@ -75,7 +77,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   useEffect(() => {
     let active = true;
     const refresh = async () => {
-      if (!active || document.visibilityState !== 'visible' || chatRefreshRunning.current) return;
+      if (!active || sending || document.visibilityState !== 'visible' || chatRefreshRunning.current) return;
       chatRefreshRunning.current = true;
       try { await onRefreshChat(); }
       finally { chatRefreshRunning.current = false; }
@@ -91,7 +93,12 @@ export default function ChatPanel({ user, members = [], messages, notifications,
       window.removeEventListener('focus', refresh);
       document.removeEventListener('visibilitychange', refreshWhenVisible);
     };
-  }, [onRefreshChat]);
+  }, [onRefreshChat, sending]);
+
+  useEffect(() => () => {
+    pendingPreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    pendingPreviewUrls.current.clear();
+  }, []);
 
   const changeText = (value) => {
     setText(value);
@@ -110,7 +117,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
     if (searchActive) return;
     const box = scrollRef.current;
     if (box) box.scrollTop = box.scrollHeight;
-  }, [messages.length, searchActive]);
+  }, [messages.length, pendingMessages.length, searchActive]);
 
   const loadOlder = async () => {
     const oldest = allMessages[0];
@@ -164,23 +171,62 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   const send = async (event) => {
     event.preventDefault();
     if (!text.trim() && images.length === 0) return;
+    const draftText = text.trim();
+    const draftImages = images;
+    const draftReplyTo = replyTo;
+    const temporaryId = `pending-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const pendingAttachments = draftImages.map((file, index) => {
+      const url = URL.createObjectURL(file);
+      pendingPreviewUrls.current.add(url);
+      return { id: `${temporaryId}-image-${index}`, url, filename: file.name };
+    });
+    const pendingMessage = {
+      id: temporaryId,
+      sender: user,
+      content: draftText,
+      replyTo: draftReplyTo,
+      attachments: pendingAttachments,
+      reactions: [],
+      createdAt: new Date().toISOString(),
+      pending: true,
+    };
+
+    // Clear the composer and show the message before image compression or the
+    // network request starts. This keeps chat responsive on a free server.
+    setPendingMessages((current) => [...current, pendingMessage]);
+    setText(''); setImages([]); setReplyTo(null); setEmojiOpen(false); setImageViewer(null);
+    if (fileRef.current) fileRef.current.value = '';
+    if (searchActive) clearSearch();
+    void teaApi.setTyping(false).catch(() => {});
     setSending(true);
-    const payload = { senderMemberId: user.id, content: text.trim(), replyToMessageId: replyTo?.id || null };
+    const payload = { senderMemberId: user.id, content: draftText, replyToMessageId: draftReplyTo?.id || null };
     try {
-      const optimizedImages = images.length
-        ? await optimizeChatImages(images, (status) => setSendStatus(status))
-        : images;
-      setSendStatus(images.length ? 'Đang gửi ảnh...' : 'Đang gửi tin nhắn...');
-      const sentMessage = images.length
+      const optimizedImages = draftImages.length
+        ? await optimizeChatImages(draftImages, (status) => setSendStatus(status))
+        : draftImages;
+      setSendStatus(draftImages.length ? 'Đang gửi ảnh...' : 'Đang gửi tin nhắn...');
+      const sentMessage = draftImages.length
         ? await teaApi.sendMessageWithMedia({ ...payload, images: optimizedImages })
         : await teaApi.sendMessage(payload);
       onMessageChanged(sentMessage);
-      await teaApi.setTyping(false).catch(() => {});
-      setText(''); setImages([]); setReplyTo(null); setEmojiOpen(false); setImageViewer(null);
-      if (fileRef.current) fileRef.current.value = '';
-      if (searchActive) clearSearch();
+      setPendingMessages((current) => current.filter((message) => message.id !== temporaryId));
+      pendingAttachments.forEach((image) => {
+        pendingPreviewUrls.current.delete(image.url);
+        URL.revokeObjectURL(image.url);
+      });
       void onRefreshChat();
-    } catch (error) { flash(error.message || 'Không gửi được tin nhắn.'); }
+    } catch (error) {
+      setPendingMessages((current) => current.filter((message) => message.id !== temporaryId));
+      pendingAttachments.forEach((image) => {
+        pendingPreviewUrls.current.delete(image.url);
+        URL.revokeObjectURL(image.url);
+      });
+      // Do not make the user type or choose the attachments again after an error.
+      setText((current) => current || draftText);
+      setImages((current) => current.length ? current : draftImages);
+      setReplyTo((current) => current || draftReplyTo);
+      flash(error.message || 'Không gửi được tin nhắn. Nội dung đã được trả lại ô nhập.');
+    }
     finally { setSending(false); setSendStatus(''); }
   };
 
@@ -308,12 +354,12 @@ export default function ChatPanel({ user, members = [], messages, notifications,
             const mine = message.sender?.id === user.id;
             const seenBy = mine ? readStates.filter((state) => state.member?.id !== user.id
               && Number(state.lastReadMessageId || 0) >= Number(message.id)) : [];
-            const canDelete = !message.deleted && (mine || user.role === 'ADMIN');
+            const canDelete = !message.pending && !message.deleted && (mine || user.role === 'ADMIN');
             const reactionData = groupReactions(message.reactions || [], user.id);
-            return <article className={`message ${mine ? 'mine' : ''} ${message.deleted ? 'deleted' : ''}`} key={message.id}>
+            return <article className={`message ${mine ? 'mine' : ''} ${message.deleted ? 'deleted' : ''} ${message.pending ? 'pending' : ''}`} key={message.id}>
               <ChatAvatar member={message.sender} />
               <div className="message-body">
-                <div className="message-meta"><strong>{message.sender?.displayName}</strong><small>{formatTime(message.createdAt)}</small></div>
+                <div className="message-meta"><strong>{message.sender?.displayName}</strong><small>{message.pending ? 'Đang gửi...' : formatTime(message.createdAt)}</small></div>
                 {message.replyTo && <button className="reply-preview" type="button" onClick={() => document.getElementById(`message-${message.replyTo.id}`)?.scrollIntoView({ block: 'center' })}>
                   <b>↪ {message.replyTo.sender?.displayName}</b><span>{message.replyTo.content || 'Tin nhắn đã bị xóa'}</span>
                 </button>}
@@ -326,8 +372,8 @@ export default function ChatPanel({ user, members = [], messages, notifications,
                 {mine && !message.deleted && seenBy.length > 0 && <p className="message-seen" title={seenBy.map((state) => state.member.displayName).join(', ')}>
                   Đã xem: {seenBy.map((state) => state.member.displayName).join(', ')}
                 </p>}
-                {!message.deleted && reactionData.length > 0 && <div className="message-reactions">{reactionData.map((reaction) => <button type="button" disabled={reactingMessageId !== null} className={reaction.mine ? 'mine' : ''} key={reaction.emoji} title={reaction.names.join(', ')} onClick={() => react(message.id, reaction.emoji)}>{reaction.emoji} <b>{reaction.count}</b></button>)}</div>}
-                {!message.deleted && <div className="message-actions"><button type="button" disabled={reactingMessageId !== null || deletingMessageId !== null} onClick={() => setReactionPickerId(reactionPickerId === message.id ? null : message.id)}>☺ Cảm xúc</button><button type="button" disabled={deletingMessageId !== null} onClick={() => { setReplyTo(message); setEmojiOpen(false); if (searchActive) clearSearch(); }}>↩ Trả lời</button>{canDelete && <button type="button" className="delete-message" disabled={deletingMessageId !== null} onClick={() => remove(message)}>{deletingMessageId === message.id ? 'Đang xóa...' : '🗑 Xóa'}</button>}</div>}
+                {!message.pending && !message.deleted && reactionData.length > 0 && <div className="message-reactions">{reactionData.map((reaction) => <button type="button" disabled={reactingMessageId !== null} className={reaction.mine ? 'mine' : ''} key={reaction.emoji} title={reaction.names.join(', ')} onClick={() => react(message.id, reaction.emoji)}>{reaction.emoji} <b>{reaction.count}</b></button>)}</div>}
+                {!message.pending && !message.deleted && <div className="message-actions"><button type="button" disabled={reactingMessageId !== null || deletingMessageId !== null} onClick={() => setReactionPickerId(reactionPickerId === message.id ? null : message.id)}>☺ Cảm xúc</button><button type="button" disabled={deletingMessageId !== null} onClick={() => { setReplyTo(message); setEmojiOpen(false); if (searchActive) clearSearch(); }}>↩ Trả lời</button>{canDelete && <button type="button" className="delete-message" disabled={deletingMessageId !== null} onClick={() => remove(message)}>{deletingMessageId === message.id ? 'Đang xóa...' : '🗑 Xóa'}</button>}</div>}
                 {reactionPickerId === message.id && <div className="reaction-picker">{['👍', '❤️', '😂', '😮', '😢', '🎉'].map((emoji) => <button type="button" disabled={reactingMessageId !== null} key={emoji} onClick={() => react(message.id, emoji)}>{emoji}</button>)}</div>}
               </div>
             </article>;
@@ -357,8 +403,8 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   </>;
 }
 
-const CHAT_IMAGE_MAX_DIMENSION = 1280;
-const CHAT_IMAGE_TARGET_BYTES = 1_250_000;
+const CHAT_IMAGE_MAX_DIMENSION = 1080;
+const CHAT_IMAGE_TARGET_BYTES = 700_000;
 
 async function optimizeChatImages(images, onProgress) {
   const optimized = [];

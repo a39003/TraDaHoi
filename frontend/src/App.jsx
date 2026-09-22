@@ -24,6 +24,17 @@ const calendarRange = (month) => {
   end.setDate(end.getDate() + (6 - ((end.getDay() + 6) % 7)));
   return { start: isoDate(start), end: isoDate(end) };
 };
+const sameExpenses = (current, incoming) => current.length === incoming.length && current.every((expense, index) => {
+  const next = incoming[index];
+  if (!next || expense.id !== next.id || expense.totalAmount !== next.totalAmount
+    || expense.payer?.id !== next.payer?.id || expense.items?.length !== next.items?.length) return false;
+  return expense.items.every((item, itemIndex) => {
+    const nextItem = next.items[itemIndex];
+    return nextItem && item.id === nextItem.id && item.lineTotal === nextItem.lineTotal
+      && item.quantity === nextItem.quantity && item.drinkName === nextItem.drinkName
+      && item.consumer?.id === nextItem.consumer?.id;
+  });
+});
 const initials = (name) => String(name || '?').split(/\s+/).filter(Boolean).slice(-2).map((part) => part[0]).join('').toUpperCase();
 let notificationAudioContext = null;
 
@@ -146,6 +157,9 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const knownNotificationIds = useRef(null);
   const staticDataLoaded = useRef(false);
   const secondaryDataLoaded = useRef(false);
+  const expensesRef = useRef([]);
+  const liveDataRefreshRunning = useRef(false);
+  const lastCatalogSyncAt = useRef(0);
   const [calendarMonth, setCalendarMonth] = useState(monthValue);
   const weekStart = monday();
   const weekEnd = useMemo(() => {
@@ -156,6 +170,8 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const expenseRangeEnd = calendarBounds.end > weekEnd ? calendarBounds.end : weekEnd;
   const isAdmin = user.role === 'ADMIN';
 
+  useEffect(() => { expensesRef.current = expenses; }, [expenses]);
+
   const load = useCallback(async () => {
     const shouldLoadStaticData = !staticDataLoaded.current;
     try {
@@ -165,6 +181,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
         ]);
         setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData);
         staticDataLoaded.current = true;
+        lastCatalogSyncAt.current = Date.now();
       } else {
         // Khi chỉ đổi tháng, chỉ tải lại lịch điểm danh cần hiển thị.
         // Danh sách thành viên/đồ uống, chat và thông báo được giữ lại.
@@ -254,6 +271,41 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     }
   }, [weekStart]);
 
+  const refreshLiveData = useCallback(async () => {
+    // The chat view already has its own lightweight message polling. Do not
+    // compete with a message upload by fetching the attendance calendar here.
+    if (view === 'chat' || document.visibilityState !== 'visible' || liveDataRefreshRunning.current) return;
+    liveDataRefreshRunning.current = true;
+    try {
+      // Attendance changes are the most time-sensitive data. This small
+      // request makes another member's check-in appear without a manual F5.
+      const incomingExpenses = await teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd);
+      const expensesChanged = !sameExpenses(expensesRef.current, incomingExpenses);
+      if (expensesChanged) {
+        expensesRef.current = incomingExpenses;
+        setExpenses(incomingExpenses);
+        void refreshSettlement();
+      }
+
+      // Member and drink administration changes are less frequent, so sync
+      // them once per minute instead of on every attendance check.
+      const now = Date.now();
+      if (now - lastCatalogSyncAt.current >= 60_000) {
+        const [memberData, drinkData] = await Promise.all([
+          teaApi.getMembers(isAdmin),
+          teaApi.getDrinks(isAdmin),
+        ]);
+        setMembers(memberData);
+        setDrinks(drinkData);
+        lastCatalogSyncAt.current = now;
+      }
+    } catch {
+      // Keep the last visible data if a background refresh is interrupted.
+    } finally {
+      liveDataRefreshRunning.current = false;
+    }
+  }, [view, isAdmin, expenseRangeStart, expenseRangeEnd, refreshSettlement]);
+
   const applyAttendanceChange = useCallback((change) => {
     if (change?.type === 'delete') {
       setExpenses((current) => current.filter((expense) => expense.id !== change.id));
@@ -312,6 +364,17 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     const id = window.setInterval(refreshAlerts, 5000);
     return () => window.clearInterval(id);
   }, [refreshAlerts]);
+  useEffect(() => {
+    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') void refreshLiveData(); };
+    const id = window.setInterval(refreshWhenVisible, 10_000);
+    window.addEventListener('focus', refreshWhenVisible);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener('focus', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
+  }, [refreshLiveData]);
 
   const flash = (message) => {
     setNotice(message);
