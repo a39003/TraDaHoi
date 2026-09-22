@@ -149,6 +149,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const [notifications, setNotifications] = useState([]);
   const [settlement, setSettlement] = useState(null);
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
+  const [attendanceSettings, setAttendanceSettings] = useState(null);
   const [attendanceEdit, setAttendanceEdit] = useState(null);
   const [notice, setNotice] = useState('');
   const lastAlertUnreadCount = useRef(0);
@@ -176,10 +177,10 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     const shouldLoadStaticData = !staticDataLoaded.current;
     try {
       if (shouldLoadStaticData) {
-        const [memberData, drinkData, expenseData] = await Promise.all([
-          teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin), teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd),
+        const [memberData, drinkData, expenseData, settingsData] = await Promise.all([
+          teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin), teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd), teaApi.getAttendanceSettings(),
         ]);
-        setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData);
+        setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData); setAttendanceSettings(settingsData);
         staticDataLoaded.current = true;
         lastCatalogSyncAt.current = Date.now();
       } else {
@@ -279,7 +280,11 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     try {
       // Attendance changes are the most time-sensitive data. This small
       // request makes another member's check-in appear without a manual F5.
-      const incomingExpenses = await teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd);
+      const [incomingExpenses, settingsData] = await Promise.all([
+        teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd),
+        teaApi.getAttendanceSettings(),
+      ]);
+      setAttendanceSettings(settingsData);
       const expensesChanged = !sameExpenses(expensesRef.current, incomingExpenses);
       if (expensesChanged) {
         expensesRef.current = incomingExpenses;
@@ -416,7 +421,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       <header className="app-header"><div><p className="eyebrow">NHÓM TRÀ ĐÁ</p><h1>{titles[view]}</h1></div><NotificationBell user={user} messages={messages} notifications={notifications} chatUnreadCount={chatUnreadCount} chatOpen={view === 'chat'} onOpenChat={() => setView('chat')} onRefresh={refreshAlerts} /></header>
       <>
         {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={applyAttendanceChange} editRequest={attendanceEdit} onEditHandled={() => setAttendanceEdit(null)} flash={flash} />}
-        {view === 'week' && <MonthCalendar records={visibleRecords} expenses={expenses} user={user} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} onEditExpense={editAttendanceFromCalendar} onDeleteExpense={deleteAttendanceFromCalendar} />}
+        {view === 'week' && <MonthCalendar records={visibleRecords} expenses={expenses} user={user} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} attendanceLocked={Boolean(attendanceSettings?.locked)} onEditExpense={editAttendanceFromCalendar} onDeleteExpense={deleteAttendanceFromCalendar} />}
         {view === 'settlement' && <SettlementView balances={balances} settlement={settlement} user={user} weekStart={weekStart} weekEnd={settlement?.weekEnd || weekEnd} isAdmin={isAdmin} />}
         {view === 'chat' && <ChatPanel user={user} members={activeMembers} messages={messages} notifications={notifications} onSaved={refreshAlerts} onRefreshChat={refreshChat} onMessageChanged={mergeLiveMessage} flash={flash} />}
         {view === 'profile' && <ProfileView user={user} onUserUpdated={(next) => {
@@ -548,7 +553,7 @@ function RecordList({ records }) {
   </article>)}</div>;
 }
 
-function MonthCalendar({ records, expenses, user, month, onMonthChange, isAdmin, onEditExpense, onDeleteExpense }) {
+function MonthCalendar({ records, expenses, user, month, onMonthChange, isAdmin, attendanceLocked, onEditExpense, onDeleteExpense }) {
   const bounds = useMemo(() => calendarRange(month), [month]);
   const grouped = useMemo(() => records.reduce((all, record) => {
     if (record.date >= bounds.start && record.date <= bounds.end) {
@@ -585,11 +590,11 @@ function MonthCalendar({ records, expenses, user, month, onMonthChange, isAdmin,
       </button>;
     })}</div>
   </section>
-  {selectedDate && <DayDetailModal date={selectedDate} records={grouped[selectedDate] || []} expenses={expenses.filter((expense) => expense.orderDate === selectedDate)} user={user} isAdmin={isAdmin} onEditExpense={onEditExpense} onDeleteExpense={onDeleteExpense} onClose={() => setSelectedDate(null)} />}
+  {selectedDate && <DayDetailModal date={selectedDate} records={grouped[selectedDate] || []} expenses={expenses.filter((expense) => expense.orderDate === selectedDate)} user={user} isAdmin={isAdmin} attendanceLocked={attendanceLocked && selectedDate === isoDate()} onEditExpense={onEditExpense} onDeleteExpense={onDeleteExpense} onClose={() => setSelectedDate(null)} />}
   </>;
 }
 
-function DayDetailModal({ date, records, expenses, user, isAdmin, onEditExpense, onDeleteExpense, onClose }) {
+function DayDetailModal({ date, records, expenses, user, isAdmin, attendanceLocked, onEditExpense, onDeleteExpense, onClose }) {
   const [deletingExpenseId, setDeletingExpenseId] = useState(null);
   useEffect(() => {
     const close = (event) => { if (event.key === 'Escape') onClose(); };
@@ -603,8 +608,9 @@ function DayDetailModal({ date, records, expenses, user, isAdmin, onEditExpense,
     <div className="day-detail-title"><span>📅</span><div><p className="eyebrow">CHI TIẾT ĐIỂM DANH</p><h2>{label}</h2><p>{isAdmin ? 'Danh sách thành viên đi uống, đồ uống, giá tiền và người đã trả.' : 'Đồ uống, số tiền và người đã trả cho lượt uống của bạn.'}</p></div></div>
     <div className="day-detail-summary"><span><small>Số lượt</small><b>{records.length}</b></span><span><small>Tổng tiền</small><b>{currency(total)}</b></span></div>
     <div className="day-detail-list">{records.length ? <RecordList records={records} /> : <p className="empty">Không có lượt uống nước trong ngày này.</p>}</div>
+    {attendanceLocked && expenses.length > 0 && <p className="attendance-lock-note">🔒 Điểm danh hôm nay đã khóa; không thể sửa hoặc xóa.</p>}
     {expenses.length > 0 && <div className="day-detail-actions">{expenses.map((expense) => {
-      const canManage = isAdmin || expense.createdBy?.id === user.id;
+      const canManage = !attendanceLocked && (isAdmin || expense.createdBy?.id === user.id);
       if (!canManage) return null;
       return <div className="day-detail-order-actions" key={expense.id}>
         <span>Đơn #{expense.id}{expense.createdBy?.id === user.id ? ' · Bạn đã tạo' : ` · ${expense.createdBy?.displayName || 'Admin'} đã tạo`}</span>

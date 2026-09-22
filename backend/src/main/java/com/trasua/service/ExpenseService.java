@@ -222,9 +222,9 @@ public class ExpenseService {
     }
 
     private void assertDailyEditable(LocalDate date, Member actor) {
-        if ("ADMIN".equals(actor.getRole())) return;
         LocalDate today = LocalDate.now(AttendanceSettingsService.VIETNAM);
         if (!date.equals(today)) {
+            if ("ADMIN".equals(actor.getRole())) return;
             throw new BusinessRuleException("Thành viên chỉ được tạo hoặc sửa điểm danh của hôm nay");
         }
         LocalTime cutoff = attendanceSettings.cutoffTime();

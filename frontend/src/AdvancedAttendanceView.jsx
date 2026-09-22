@@ -43,7 +43,9 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
     const drink = drinks.find((item) => String(item.id) === line.drinkId);
     return sum + (drink?.price || 0) * Math.max(1, Number(line.quantity || 1));
   }, 0);
-  const locked = Boolean(settings?.locked && !isAdmin);
+  // The daily cut-off applies to every account for today's attendance.
+  // Admin may still adjust historical records from the month calendar.
+  const locked = Boolean(settings?.locked && attendanceDate === today());
 
   const updateLine = (lineKey, field, value) => setLines((current) => current.map((line) => line.key === lineKey ? { ...line, [field]: value } : line));
   const addLine = () => setLines((current) => [...current, newLine(mode === 'PERSONAL' ? user.id : members[0]?.id)]);
@@ -161,7 +163,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   return <div className="advanced-attendance">
     <section className="panel attendance-form advanced-attendance-form">
       <div className="panel-title"><span>📝</span><div><h2>{editingId ? `Sửa điểm danh ${weekdayLabel()}` : `Điểm danh ${weekdayLabel()}`}</h2><p>Chọn một hoặc nhiều đồ uống, sau đó chọn người đã trả tiền.</p></div></div>
-      {settings && <div className={`cutoff-banner ${settings.locked ? 'locked' : ''}`}><span>{settings.locked ? '🔒' : '⏱️'}</span><div><strong>{settings.locked && !isAdmin ? 'Đã khóa điểm danh' : `Giờ khóa: ${String(settings.cutoffTime).slice(0, 5)}`}</strong><small>{isAdmin && settings.locked ? 'Admin vẫn có thể điều chỉnh.' : 'Có thể sửa hoặc hủy trước giờ khóa.'}</small></div></div>}
+      {settings && <div className={`cutoff-banner ${locked ? 'locked' : ''}`}><span>{locked ? '🔒' : '⏱️'}</span><div><strong>{locked ? 'Đã khóa điểm danh hôm nay' : `Giờ khóa: ${String(settings.cutoffTime).slice(0, 5)}`}</strong><small>{locked ? 'Không thể tạo, sửa hoặc hủy điểm danh của hôm nay.' : 'Có thể sửa hoặc hủy trước giờ khóa.'}</small></div></div>}
       {preventDuplicateEntry && <div className="duplicate-attendance-banner" role="status"><span>✓</span><div><strong>Bạn đã được điểm danh hôm nay</strong><p>{existingOwnAttendance.createdBy?.id === user.id ? 'Bạn đã tạo đơn này.' : `${existingOwnAttendance.createdBy?.displayName || 'Một thành viên'} đã thêm bạn vào đơn uống chung.`} Không thể tạo thêm điểm danh trùng.</p></div><button type="button" className="outline small" onClick={() => document.getElementById('my-today-attendance')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Xem đơn</button></div>}
       <div className="split-mode-tabs">
         <button type="button" disabled={preventDuplicateEntry} className={mode === 'PERSONAL' ? 'active' : ''} onClick={() => changeMode('PERSONAL')}>Cá nhân</button>
@@ -197,7 +199,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
           <div className="today-order-head"><div><strong>Điểm danh lần {expenseIndex + 1} · {weekdayLabel()}</strong><span>{expense.splitMode === 'EVEN' ? 'Uống chung chia đều' : expense.items.length > 1 ? 'Nhiều đồ uống' : 'Cá nhân'} · {expense.payer.displayName} trả</span></div><b>{money(visibleItems.reduce((sum, item) => sum + item.lineTotal, 0))}</b></div>
           {sharedCompanions.length > 0 && <div className="shared-companions"><small>Uống chung với</small><div>{sharedCompanions.map((member) => <span key={member.id}><Avatar member={member} />{member.displayName}</span>)}</div></div>}
           <div className="today-order-items">{visibleItems.map((item) => <div key={item.id}><Avatar member={item.consumer} /><span><strong>{item.consumer.displayName}</strong><small>{item.drinkName} × {item.quantity}</small></span><b>{money(item.lineTotal)}</b></div>)}</div>
-          {canChange && (!locked || isAdmin) && <div className="today-order-actions">{canEditShape && <button type="button" className="outline small" disabled={cancellingId !== null} onClick={() => edit(expense)}>✎ Sửa</button>}<button type="button" className="danger small" disabled={cancellingId !== null} onClick={() => cancelAttendance(expense)}>{cancellingId === expense.id ? 'Đang hủy...' : 'Hủy điểm danh'}</button></div>}
+          {canChange && !locked && <div className="today-order-actions">{canEditShape && <button type="button" className="outline small" disabled={cancellingId !== null} onClick={() => edit(expense)}>✎ Sửa</button>}<button type="button" className="danger small" disabled={cancellingId !== null} onClick={() => cancelAttendance(expense)}>{cancellingId === expense.id ? 'Đang hủy...' : 'Hủy điểm danh'}</button></div>}
         </article>;
       })}</div>}
     </section>
