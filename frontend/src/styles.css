@@ -916,6 +916,20 @@ img, svg, video { max-width: 100%; }
   .payment-modal dl { grid-template-columns: 90px minmax(0, 1fr); }
   .payment-modal dd { overflow-wrap: anywhere; }
   .toast { right: 9px; bottom: calc(72px + env(safe-area-inset-bottom)); left: 9px; max-width: none; }
+
+  /* iPhone 12 Pro/Pro Max: keep the attendance-time panel compact and
+     prevent Safari's native time field from extending past its card. */
+  .attendance-settings-panel { padding: 16px 14px; }
+  .attendance-settings-panel .panel-title { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: start; margin-bottom: 19px; }
+  .attendance-settings-panel .panel-title > span { grid-row: 1 / span 2; width: 40px; height: 40px; }
+  .attendance-settings-panel .panel-title h2 { font-size: 22px; line-height: 1.15; }
+  .attendance-settings-panel .panel-title p { font-size: 11px; line-height: 1.5; }
+  .attendance-settings-form { gap: 12px; }
+  .attendance-settings-form > label { gap: 8px; }
+  .attendance-settings-form input[type="time"] { display: block; min-inline-size: 0 !important; height: 52px; padding-inline: 12px; font-size: 18px; }
+  .cutoff-preview { min-width: 0; padding: 10px; }
+  .cutoff-preview > div { min-width: 0; }
+  .cutoff-preview small { overflow-wrap: anywhere; }
 }
 
 @media (max-width: 350px) {

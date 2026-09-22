@@ -139,7 +139,6 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const [settlement, setSettlement] = useState(null);
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
   const [attendanceEdit, setAttendanceEdit] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState('');
   const lastAlertUnreadCount = useRef(0);
   const lastChatMessageId = useRef(0);
@@ -159,7 +158,6 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
 
   const load = useCallback(async () => {
     const shouldLoadStaticData = !staticDataLoaded.current;
-    if (shouldLoadStaticData) setLoading(true);
     try {
       if (shouldLoadStaticData) {
         const [memberData, drinkData, expenseData] = await Promise.all([
@@ -174,7 +172,6 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
         setExpenses(expenseData);
       }
     } catch (error) { setNotice(error.message || 'Không tải được dữ liệu từ máy chủ.'); }
-    finally { if (shouldLoadStaticData) setLoading(false); }
 
     if (secondaryDataLoaded.current) return;
     secondaryDataLoaded.current = true;
@@ -354,7 +351,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     </aside>
     <main className="app-main">
       <header className="app-header"><div><p className="eyebrow">NHÓM TRÀ ĐÁ</p><h1>{titles[view]}</h1></div><NotificationBell user={user} messages={messages} notifications={notifications} chatUnreadCount={chatUnreadCount} chatOpen={view === 'chat'} onOpenChat={() => setView('chat')} onRefresh={refreshAlerts} /></header>
-      {loading ? <p className="loading">Đang tải dữ liệu...</p> : <>
+      <>
         {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={applyAttendanceChange} editRequest={attendanceEdit} onEditHandled={() => setAttendanceEdit(null)} flash={flash} />}
         {view === 'week' && <MonthCalendar records={visibleRecords} expenses={expenses} user={user} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} onEditExpense={editAttendanceFromCalendar} onDeleteExpense={deleteAttendanceFromCalendar} />}
         {view === 'settlement' && <SettlementView balances={balances} settlement={settlement} user={user} weekStart={weekStart} weekEnd={settlement?.weekEnd || weekEnd} isAdmin={isAdmin} />}
@@ -364,7 +361,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
           setMembers((current) => [...current.filter((member) => member.id !== next.id), next]);
         }} flash={flash} />}
         {view === 'admin' && isAdmin && <AdminConsole members={members} drinks={drinks} currentUser={user} onSaved={applyAdminChange} flash={flash} />}
-      </>}
+      </>
     </main>
     {notice && <div className="toast">{notice}</div>}
   </div>;
