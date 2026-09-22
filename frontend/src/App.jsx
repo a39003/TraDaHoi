@@ -170,6 +170,9 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const expenseRangeStart = calendarBounds.start < weekStart ? calendarBounds.start : weekStart;
   const expenseRangeEnd = calendarBounds.end > weekEnd ? calendarBounds.end : weekEnd;
   const isAdmin = user.role === 'ADMIN';
+  const todayKey = isoDate();
+  const activeExpenseRangeStart = view === 'week' ? expenseRangeStart : view === 'settlement' ? weekStart : todayKey;
+  const activeExpenseRangeEnd = view === 'week' ? expenseRangeEnd : view === 'settlement' ? weekEnd : todayKey;
 
   useEffect(() => { expensesRef.current = expenses; }, [expenses]);
 
@@ -177,17 +180,27 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     const shouldLoadStaticData = !staticDataLoaded.current;
     try {
       if (shouldLoadStaticData) {
-        const [memberData, drinkData, expenseData, settingsData] = await Promise.all([
-          teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin), teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd), teaApi.getAttendanceSettings(),
+        // Start this first: the cut-off controls whether attendance is usable.
+        // It updates independently and never waits for orders/catalogues.
+        const settingsRequest = teaApi.getAttendanceSettings()
+          .then((settingsData) => {
+            setAttendanceSettings(settingsData);
+            return settingsData;
+          })
+          .catch(() => null);
+
+        // The attendance screen is the landing page. Fetch only today's order
+        // first, rather than making it wait behind a full calendar range.
+        const todayExpenses = await teaApi.getExpensesRange(todayKey, todayKey);
+        setExpenses(todayExpenses);
+
+        const [memberData, drinkData] = await Promise.all([
+          teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin),
         ]);
-        setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData); setAttendanceSettings(settingsData);
+        setMembers(memberData); setDrinks(drinkData);
+        await settingsRequest;
         staticDataLoaded.current = true;
         lastCatalogSyncAt.current = Date.now();
-      } else {
-        // Khi chỉ đổi tháng, chỉ tải lại lịch điểm danh cần hiển thị.
-        // Danh sách thành viên/đồ uống, chat và thông báo được giữ lại.
-        const expenseData = await teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd);
-        setExpenses(expenseData);
       }
     } catch (error) { setNotice(error.message || 'Không tải được dữ liệu từ máy chủ.'); }
 
@@ -210,7 +223,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       // Giao diện chính vẫn dùng được; các lần đồng bộ nền sau sẽ thử lại.
       secondaryDataLoaded.current = false;
     }
-  }, [isAdmin, user.id, expenseRangeStart, expenseRangeEnd]);
+  }, [isAdmin, user.id, todayKey, weekStart]);
 
   const refreshAlerts = useCallback(async () => {
     try {
@@ -281,7 +294,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       // Attendance changes are the most time-sensitive data. This small
       // request makes another member's check-in appear without a manual F5.
       const [incomingExpenses, settingsData] = await Promise.all([
-        teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd),
+        teaApi.getExpensesRange(activeExpenseRangeStart, activeExpenseRangeEnd),
         teaApi.getAttendanceSettings(),
       ]);
       setAttendanceSettings(settingsData);
@@ -309,7 +322,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     } finally {
       liveDataRefreshRunning.current = false;
     }
-  }, [view, isAdmin, expenseRangeStart, expenseRangeEnd, refreshSettlement]);
+  }, [view, isAdmin, activeExpenseRangeStart, activeExpenseRangeEnd, refreshSettlement]);
 
   const applyAttendanceChange = useCallback((change) => {
     if (change?.type === 'delete') {
@@ -359,6 +372,14 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    if (view === 'attendance' || !staticDataLoaded.current) return undefined;
+    let active = true;
+    teaApi.getExpensesRange(activeExpenseRangeStart, activeExpenseRangeEnd)
+      .then((expenseData) => { if (active) setExpenses(expenseData); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [view, activeExpenseRangeStart, activeExpenseRangeEnd]);
   useEffect(() => {
     const unlock = () => unlockNotificationSound();
     window.addEventListener('pointerdown', unlock, { once: true });
@@ -420,7 +441,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     <main className="app-main">
       <header className="app-header"><div><p className="eyebrow">NHÓM TRÀ ĐÁ</p><h1>{titles[view]}</h1></div><NotificationBell user={user} messages={messages} notifications={notifications} chatUnreadCount={chatUnreadCount} chatOpen={view === 'chat'} onOpenChat={() => setView('chat')} onRefresh={refreshAlerts} /></header>
       <>
-        {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} onSaved={applyAttendanceChange} editRequest={attendanceEdit} onEditHandled={() => setAttendanceEdit(null)} flash={flash} />}
+        {view === 'attendance' && <AdvancedAttendanceView user={user} members={activeMembers} drinks={drinks.filter((drink) => drink.active)} todayExpenses={todayExpenses} isAdmin={isAdmin} attendanceSettings={attendanceSettings} onSaved={applyAttendanceChange} editRequest={attendanceEdit} onEditHandled={() => setAttendanceEdit(null)} flash={flash} />}
         {view === 'week' && <MonthCalendar records={visibleRecords} expenses={expenses} user={user} month={calendarMonth} onMonthChange={setCalendarMonth} isAdmin={isAdmin} attendanceLocked={Boolean(attendanceSettings?.locked)} onEditExpense={editAttendanceFromCalendar} onDeleteExpense={deleteAttendanceFromCalendar} />}
         {view === 'settlement' && <SettlementView balances={balances} settlement={settlement} user={user} weekStart={weekStart} weekEnd={settlement?.weekEnd || weekEnd} isAdmin={isAdmin} />}
         {view === 'chat' && <ChatPanel user={user} members={activeMembers} messages={messages} notifications={notifications} onSaved={refreshAlerts} onRefreshChat={refreshChat} onMessageChanged={mergeLiveMessage} flash={flash} />}

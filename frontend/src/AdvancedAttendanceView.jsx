@@ -13,13 +13,13 @@ const weekdayLabel = () => {
   return value.charAt(0).toUpperCase() + value.slice(1);
 };
 
-export default function AdvancedAttendanceView({ user, members, drinks, todayExpenses, isAdmin, onSaved, editRequest, onEditHandled, flash }) {
+export default function AdvancedAttendanceView({ user, members, drinks, todayExpenses, isAdmin, attendanceSettings, onSaved, editRequest, onEditHandled, flash }) {
   const [mode, setMode] = useState('PERSONAL');
   const [lines, setLines] = useState([]);
   const [payerId, setPayerId] = useState(String(user.id));
   const [sharedMembers, setSharedMembers] = useState([user.id]);
   const [favorites, setFavorites] = useState([]);
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(attendanceSettings || null);
   const [editingId, setEditingId] = useState(null);
   const [attendanceDate, setAttendanceDate] = useState(today());
   const [saving, setSaving] = useState(false);
@@ -30,10 +30,13 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
     if (!lines.length && drinks.length) setLines([newLine()]);
   }, [drinks.length]);
   useEffect(() => {
-    Promise.all([teaApi.getFavoriteDrinks(), teaApi.getAttendanceSettings()])
-      .then(([favoriteData, settingData]) => { setFavorites(favoriteData.map((item) => item.id)); setSettings(settingData); })
-      .catch((error) => flash(error.message || 'Không tải được cấu hình điểm danh.'));
+    teaApi.getFavoriteDrinks()
+      .then((favoriteData) => setFavorites(favoriteData.map((item) => item.id)))
+      .catch((error) => flash(error.message || 'Không tải được danh sách đồ uống yêu thích.'));
   }, []);
+  useEffect(() => {
+    if (attendanceSettings) setSettings(attendanceSettings);
+  }, [attendanceSettings]);
 
   const orderedDrinks = useMemo(() => [...drinks].sort((a, b) => Number(favorites.includes(b.id)) - Number(favorites.includes(a.id)) || a.name.localeCompare(b.name, 'vi')), [drinks, favorites]);
   const existingOwnAttendance = useMemo(() => todayExpenses.find((expense) => expense.items
