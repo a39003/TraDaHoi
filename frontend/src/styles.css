@@ -97,9 +97,6 @@ h1, h2 { font-family: 'Playfair Display', Georgia, serif; }
 .notification-view-chat { width: 100%; padding: 12px; color: var(--green); border: 0; border-top: 1px solid #e5eae6; background: #f7faf7; font-size: 10px; font-weight: 800; }
 .app-main > :not(.app-header):not(.toast) { max-width: 1380px; margin-left: auto; margin-right: auto; }
 .toast { position: fixed; z-index: 100; right: 24px; bottom: 24px; max-width: min(440px, calc(100vw - 32px)); padding: 14px 18px; color: white; border-radius: 11px; background: #203b30; box-shadow: 0 12px 32px rgba(0,0,0,.2); }
-.api-busy-overlay { position: fixed; z-index: 1000; inset: 0; display: grid; place-content: center; gap: 10px; color: white; text-align: center; background: rgba(18, 52, 39, .16); cursor: wait; backdrop-filter: blur(1px); }
-.api-busy-overlay > span { width: 38px; height: 38px; margin: auto; border: 4px solid rgba(255,255,255,.55); border-top-color: var(--green); border-radius: 50%; background: rgba(255,255,255,.94); animation: api-spin .7s linear infinite; }
-.api-busy-overlay b { padding: 8px 13px; border-radius: 999px; background: #173f30; box-shadow: 0 8px 22px rgba(15,45,33,.24); font-size: 12px; }
 @keyframes api-spin { to { transform: rotate(360deg); } }
 
 /* Shared components */
@@ -475,8 +472,9 @@ legend { padding: 0 7px; color: var(--green); font-weight: 800; }
 .today-order-items b { font-size: 10px; }
 .today-order-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 11px; }
 .attendance-settings-panel { max-width: 720px; }
-.attendance-settings-form { display: grid; grid-template-columns: minmax(180px, 240px) minmax(240px, 1fr) auto; gap: 14px; align-items: end; }
-.attendance-settings-form > label { display: grid; gap: 7px; font-size: 11px; font-weight: 800; }
+.attendance-settings-form { display: grid; width: 100%; min-width: 0; grid-template-columns: minmax(180px, 240px) minmax(240px, 1fr) auto; gap: 14px; align-items: end; }
+.attendance-settings-form > label { display: grid; width: 100%; min-width: 0; gap: 7px; font-size: 11px; font-weight: 800; }
+.attendance-settings-form input[type="time"] { min-width: 0; max-width: 100%; inline-size: 100%; }
 .cutoff-preview { display: flex; gap: 10px; align-items: center; min-height: 50px; padding: 8px 12px; color: #296147; border-radius: 11px; background: #edf7f0; }
 .cutoff-preview.locked { color: #8a463a; background: #fff0ed; }
 .cutoff-preview > span { font-size: 20px; }
@@ -744,6 +742,7 @@ img, svg, video { max-width: 100%; }
   .bell-button { flex: 0 0 auto; }
 
   .panel { width: 100%; }
+  .attendance-settings-panel { width: 100%; min-width: 0; overflow: hidden; }
   .two-column, .advanced-attendance, .settlement-columns, .chat-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .system-panel { max-height: 300px; }
   .chat-panel { height: 72dvh; min-height: 500px; max-height: 760px; }
@@ -828,7 +827,7 @@ img, svg, video { max-width: 100%; }
   .admin-create-row, .admin-row, .drink-admin-row:has(> .drink-icon-picker) { min-width: 0; }
   .drink-icon-menu { left: 0; max-width: calc(100vw - 46px); overflow-x: auto; }
   .schedule-fields, .attendance-settings-form { grid-template-columns: minmax(0, 1fr); }
-  .attendance-settings-form > button { grid-column: 1; width: 100%; }
+  .attendance-settings-form > button, .attendance-settings-form > label, .attendance-settings-form input[type="time"] { grid-column: 1; width: 100%; max-width: 100%; min-width: 0; }
   .settings-form > button { width: 100%; }
 
   .chat-heading { gap: 9px; }

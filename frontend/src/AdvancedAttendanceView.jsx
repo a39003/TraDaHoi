@@ -23,6 +23,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
   const [editingId, setEditingId] = useState(null);
   const [attendanceDate, setAttendanceDate] = useState(today());
   const [saving, setSaving] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
 
   const newLine = (consumerId = user.id, drinkId = '') => ({ key: key(), drinkId: String(drinkId || ''), quantity: 1, consumerId: String(consumerId) });
   useEffect(() => {
@@ -147,8 +148,10 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
 
   const cancelAttendance = async (expense) => {
     if (!window.confirm('Bạn có chắc muốn hủy điểm danh này không? Dữ liệu sẽ bị xóa khỏi hệ thống.')) return;
+    setCancellingId(expense.id);
     try { await teaApi.deleteQuickAttendance(expense.id); if (editingId === expense.id) reset(); flash('Đã hủy điểm danh.'); onSaved({ type: 'delete', id: expense.id }); }
     catch (error) { flash(error.message || 'Không thể hủy điểm danh.'); }
+    finally { setCancellingId(null); }
   };
 
   return <div className="advanced-attendance">
@@ -183,7 +186,7 @@ export default function AdvancedAttendanceView({ user, members, drinks, todayExp
         return <article className="today-order" key={expense.id}>
           <div className="today-order-head"><div><strong>Điểm danh lần {expenseIndex + 1} · {weekdayLabel()}</strong><span>{expense.splitMode === 'EVEN' ? 'Uống chung chia đều' : expense.items.length > 1 ? 'Nhiều đồ uống' : 'Cá nhân'} · {expense.payer.displayName} trả</span></div><b>{money(visibleItems.reduce((sum, item) => sum + item.lineTotal, 0))}</b></div>
           <div className="today-order-items">{visibleItems.map((item) => <div key={item.id}><Avatar member={item.consumer} /><span><strong>{item.consumer.displayName}</strong><small>{item.drinkName} × {item.quantity}</small></span><b>{money(item.lineTotal)}</b></div>)}</div>
-          {canChange && (!locked || isAdmin) && <div className="today-order-actions">{canEditShape && <button type="button" className="outline small" onClick={() => edit(expense)}>✎ Sửa</button>}<button type="button" className="danger small" onClick={() => cancelAttendance(expense)}>Hủy điểm danh</button></div>}
+          {canChange && (!locked || isAdmin) && <div className="today-order-actions">{canEditShape && <button type="button" className="outline small" disabled={cancellingId !== null} onClick={() => edit(expense)}>✎ Sửa</button>}<button type="button" className="danger small" disabled={cancellingId !== null} onClick={() => cancelAttendance(expense)}>{cancellingId === expense.id ? 'Đang hủy...' : 'Hủy điểm danh'}</button></div>}
         </article>;
       })}</div>}
     </section>

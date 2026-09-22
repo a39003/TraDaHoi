@@ -140,12 +140,13 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
   const [attendanceEdit, setAttendanceEdit] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [apiBusy, setApiBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const lastAlertUnreadCount = useRef(0);
   const lastChatMessageId = useRef(0);
   const lastFullChatSyncAt = useRef(0);
   const knownNotificationIds = useRef(null);
+  const staticDataLoaded = useRef(false);
+  const secondaryDataLoaded = useRef(false);
   const [calendarMonth, setCalendarMonth] = useState(monthValue);
   const weekStart = monday();
   const weekEnd = useMemo(() => {
@@ -157,14 +158,26 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   const isAdmin = user.role === 'ADMIN';
 
   const load = useCallback(async () => {
-    setLoading(true);
+    const shouldLoadStaticData = !staticDataLoaded.current;
+    if (shouldLoadStaticData) setLoading(true);
     try {
-      const [memberData, drinkData, expenseData] = await Promise.all([
-        teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin), teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd),
-      ]);
-      setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData);
+      if (shouldLoadStaticData) {
+        const [memberData, drinkData, expenseData] = await Promise.all([
+          teaApi.getMembers(isAdmin), teaApi.getDrinks(isAdmin), teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd),
+        ]);
+        setMembers(memberData); setDrinks(drinkData); setExpenses(expenseData);
+        staticDataLoaded.current = true;
+      } else {
+        // Khi chỉ đổi tháng, chỉ tải lại lịch điểm danh cần hiển thị.
+        // Danh sách thành viên/đồ uống, chat và thông báo được giữ lại.
+        const expenseData = await teaApi.getExpensesRange(expenseRangeStart, expenseRangeEnd);
+        setExpenses(expenseData);
+      }
     } catch (error) { setNotice(error.message || 'Không tải được dữ liệu từ máy chủ.'); }
-    finally { setLoading(false); }
+    finally { if (shouldLoadStaticData) setLoading(false); }
+
+    if (secondaryDataLoaded.current) return;
+    secondaryDataLoaded.current = true;
 
     // Chat, thông báo và tổng kết không chặn giao diện chính. Điều này đặc biệt
     // quan trọng khi Render/Aiven vừa thức dậy hoặc kết nối mạng chậm.
@@ -180,6 +193,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       setSettlement(settlementData);
     } catch {
       // Giao diện chính vẫn dùng được; các lần đồng bộ nền sau sẽ thử lại.
+      secondaryDataLoaded.current = false;
     }
   }, [isAdmin, user.id, expenseRangeStart, expenseRangeEnd]);
 
@@ -298,11 +312,6 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
     return () => { window.removeEventListener('pointerdown', unlock); window.removeEventListener('keydown', unlock); };
   }, []);
   useEffect(() => {
-    const updateBusy = (event) => setApiBusy(Number(event.detail?.pending || 0) > 0);
-    window.addEventListener('tea-api-busy', updateBusy);
-    return () => window.removeEventListener('tea-api-busy', updateBusy);
-  }, []);
-  useEffect(() => {
     const id = window.setInterval(refreshAlerts, 5000);
     return () => window.clearInterval(id);
   }, [refreshAlerts]);
@@ -330,7 +339,7 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
   }, [members, weekRecords]);
   const titles = { attendance: 'Điểm danh hôm nay', week: 'Lịch uống nước', settlement: 'Tổng kết tuần', chat: 'Trò chuyện', profile: 'Tài khoản', admin: 'Quản trị nhóm' };
 
-  return <div className={`tea-app ${apiBusy ? 'api-busy' : ''}`} aria-busy={apiBusy}>
+  return <div className="tea-app">
     <aside className="app-sidebar">
       <div className="logo">🥤 <span>Trà Đá Hội<small>{isAdmin ? 'Admin' : 'Thành viên'}</small></span></div>
       <nav>
@@ -358,7 +367,6 @@ function TeaApp({ user, onUserUpdated, onLogout }) {
       </>}
     </main>
     {notice && <div className="toast">{notice}</div>}
-    {apiBusy && <div className="api-busy-overlay" role="status" aria-live="polite"><span /><b>Đang xử lý...</b></div>}
   </div>;
 }
 
@@ -522,6 +530,7 @@ function MonthCalendar({ records, expenses, user, month, onMonthChange, isAdmin,
 }
 
 function DayDetailModal({ date, records, expenses, user, isAdmin, onEditExpense, onDeleteExpense, onClose }) {
+  const [deletingExpenseId, setDeletingExpenseId] = useState(null);
   useEffect(() => {
     const close = (event) => { if (event.key === 'Escape') onClose(); };
     document.addEventListener('keydown', close);
@@ -539,7 +548,7 @@ function DayDetailModal({ date, records, expenses, user, isAdmin, onEditExpense,
       if (!canManage) return null;
       return <div className="day-detail-order-actions" key={expense.id}>
         <span>Đơn #{expense.id}{expense.createdBy?.id === user.id ? ' · Bạn đã tạo' : ` · ${expense.createdBy?.displayName || 'Admin'} đã tạo`}</span>
-        <div><button type="button" className="outline small" onClick={() => { onEditExpense(expense); onClose(); }}>✎ Sửa</button><button type="button" className="danger small" onClick={async () => { if (await onDeleteExpense(expense)) onClose(); }}>Xóa</button></div>
+        <div><button type="button" className="outline small" disabled={deletingExpenseId !== null} onClick={() => { onEditExpense(expense); onClose(); }}>✎ Sửa</button><button type="button" className="danger small" disabled={deletingExpenseId !== null} onClick={async () => { setDeletingExpenseId(expense.id); try { if (await onDeleteExpense(expense)) onClose(); } finally { setDeletingExpenseId(null); } }}>{deletingExpenseId === expense.id ? 'Đang xóa...' : 'Xóa'}</button></div>
       </div>;
     })}</div>}
   </section></div>;

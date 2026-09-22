@@ -35,6 +35,11 @@ export default function ChatPanel({ user, members = [], messages, notifications,
   const [typingMembers, setTypingMembers] = useState([]);
   const [readStates, setReadStates] = useState([]);
   const [reactionPickerId, setReactionPickerId] = useState(null);
+  const [deletingMessageId, setDeletingMessageId] = useState(null);
+  const [reactingMessageId, setReactingMessageId] = useState(null);
+  const [clearingGroup, setClearingGroup] = useState(false);
+  const [deletingNotificationId, setDeletingNotificationId] = useState(null);
+  const [hiddenMessageIds, setHiddenMessageIds] = useState(() => new Set());
   const fileRef = useRef(null);
   const scrollRef = useRef(null);
   const lastTypingAt = useRef(0);
@@ -42,8 +47,10 @@ export default function ChatPanel({ user, members = [], messages, notifications,
 
   const allMessages = useMemo(() => {
     const unique = new Map([...olderMessages, ...messages].map((message) => [message.id, message]));
-    return [...unique.values()].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-  }, [olderMessages, messages]);
+    return [...unique.values()]
+      .filter((message) => !hiddenMessageIds.has(message.id))
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }, [olderMessages, messages, hiddenMessageIds]);
   const displayedMessages = searchActive ? searchResults : allMessages;
   const mentionMatch = text.match(/@([^@\n]*)$/);
   const mentionSuggestions = mentionMatch ? members.filter((member) => member.id !== user.id && member.displayName.toLocaleLowerCase('vi').includes(mentionMatch[1].trim().toLocaleLowerCase('vi'))).slice(0, 6) : [];
@@ -179,33 +186,42 @@ export default function ChatPanel({ user, members = [], messages, notifications,
 
   const remove = async (message) => {
     if (!window.confirm('Bạn có chắc muốn xóa vĩnh viễn tin nhắn này khỏi hệ thống và cơ sở dữ liệu không?')) return;
+    setDeletingMessageId(message.id);
     try {
       await teaApi.deleteMessage(message.id);
+      setHiddenMessageIds((current) => new Set([...current, message.id]));
       setSearchResults((current) => current.filter((item) => item.id !== message.id));
       setOlderMessages((current) => current.filter((item) => item.id !== message.id));
       flash('Đã xóa vĩnh viễn tin nhắn.');
-      await onRefreshChat();
+      void onRefreshChat();
     } catch (error) { flash(error.message || 'Không thể xóa tin nhắn.'); }
+    finally { setDeletingMessageId(null); }
   };
 
   const react = async (messageId, emoji) => {
+    if (reactingMessageId) return;
+    setReactingMessageId(messageId);
     try {
       const changedMessage = await teaApi.toggleReaction(messageId, emoji);
       onMessageChanged(changedMessage);
       setReactionPickerId(null);
-      await onRefreshChat();
+      void onRefreshChat();
     } catch (error) { flash(error.message || 'Không thể thả cảm xúc.'); }
+    finally { setReactingMessageId(null); }
   };
 
   const clearGroupChat = async () => {
     if (!window.confirm('Bạn có chắc muốn xóa VĨNH VIỄN toàn bộ chat nhóm không? Tất cả tin nhắn và ảnh trong cơ sở dữ liệu sẽ không thể khôi phục.')) return;
+    setClearingGroup(true);
     try {
       await teaApi.clearGroupChat();
+      setHiddenMessageIds((current) => new Set([...current, ...allMessages.map((message) => message.id)]));
       setOlderMessages([]); setSearchResults([]); setSearchText('');
       setSearchActive(false); setSearchOpen(false); setHasOlder(false); setSearchHasMore(false);
       flash('Đã xóa vĩnh viễn toàn bộ chat nhóm.');
-      await onRefreshChat();
+      void onRefreshChat();
     } catch (error) { flash(error.message || 'Không thể xóa chat nhóm.'); }
+    finally { setClearingGroup(false); }
   };
 
   const chooseImages = (event) => {
@@ -243,13 +259,15 @@ export default function ChatPanel({ user, members = [], messages, notifications,
 
   const removeNotification = async (note) => {
     if (!window.confirm('Bạn có chắc muốn xóa vĩnh viễn thông báo này không?')) return;
+    setDeletingNotificationId(note.id);
     try {
       await teaApi.deleteNotification(note.id);
       if (notificationDetail?.id === note.id) setNotificationDetail(null);
       setPayment(null);
       flash('Đã xóa thông báo khỏi hệ thống.');
-      await onSaved();
+      void onSaved();
     } catch (error) { flash(error.message || 'Không thể xóa thông báo.'); }
+    finally { setDeletingNotificationId(null); }
   };
 
   const visibleNotifications = notifications;
@@ -262,7 +280,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
           <strong>{note.title}</strong><p>{note.body}</p>
           <div className="system-note-actions">
             {note.transferId ? <button type="button" className="system-qr" onClick={() => openQr(note)}>Xem mã QR thanh toán</button> : <button type="button" className="system-qr" onClick={() => openNotificationDetail(note)}>Xem chi tiết</button>}
-            <button type="button" className="system-note-delete" onClick={() => removeNotification(note)}>🗑 Xóa</button>
+            <button type="button" className="system-note-delete" disabled={deletingNotificationId !== null} onClick={() => removeNotification(note)}>{deletingNotificationId === note.id ? 'Đang xóa...' : '🗑 Xóa'}</button>
           </div>
           <small>{formatTime(note.createdAt)}</small>
         </article>)}</div>
@@ -272,7 +290,7 @@ export default function ChatPanel({ user, members = [], messages, notifications,
         <div className="panel-title chat-heading"><span>💬</span><div><h2>Chat nhóm</h2><p>Tin nhắn được lưu 6 tháng · Ảnh gửi lên được nén tự động.</p></div>
           <div className="chat-heading-actions">
             <button type="button" className={`outline chat-search-toggle ${searchOpen ? 'active' : ''}`} onClick={() => { if (searchOpen) { clearSearch(); setSearchOpen(false); } else setSearchOpen(true); }}>🔎 {searchOpen ? 'Đóng tìm kiếm' : 'Tìm tin nhắn'}</button>
-            {user.role === 'ADMIN' && <button type="button" className="danger clear-chat-button" onClick={clearGroupChat}>🗑 Xóa cả đoạn chat</button>}
+            {user.role === 'ADMIN' && <button type="button" className="danger clear-chat-button" disabled={clearingGroup} onClick={clearGroupChat}>{clearingGroup ? 'Đang xóa...' : '🗑 Xóa cả đoạn chat'}</button>}
           </div>
         </div>
         {searchOpen && <form className="chat-searchbar" onSubmit={runSearch}>
@@ -308,9 +326,9 @@ export default function ChatPanel({ user, members = [], messages, notifications,
                 {mine && !message.deleted && seenBy.length > 0 && <p className="message-seen" title={seenBy.map((state) => state.member.displayName).join(', ')}>
                   Đã xem: {seenBy.map((state) => state.member.displayName).join(', ')}
                 </p>}
-                {!message.deleted && reactionData.length > 0 && <div className="message-reactions">{reactionData.map((reaction) => <button type="button" className={reaction.mine ? 'mine' : ''} key={reaction.emoji} title={reaction.names.join(', ')} onClick={() => react(message.id, reaction.emoji)}>{reaction.emoji} <b>{reaction.count}</b></button>)}</div>}
-                {!message.deleted && <div className="message-actions"><button type="button" onClick={() => setReactionPickerId(reactionPickerId === message.id ? null : message.id)}>☺ Cảm xúc</button><button type="button" onClick={() => { setReplyTo(message); setEmojiOpen(false); if (searchActive) clearSearch(); }}>↩ Trả lời</button>{canDelete && <button type="button" className="delete-message" onClick={() => remove(message)}>🗑 Xóa</button>}</div>}
-                {reactionPickerId === message.id && <div className="reaction-picker">{['👍', '❤️', '😂', '😮', '😢', '🎉'].map((emoji) => <button type="button" key={emoji} onClick={() => react(message.id, emoji)}>{emoji}</button>)}</div>}
+                {!message.deleted && reactionData.length > 0 && <div className="message-reactions">{reactionData.map((reaction) => <button type="button" disabled={reactingMessageId !== null} className={reaction.mine ? 'mine' : ''} key={reaction.emoji} title={reaction.names.join(', ')} onClick={() => react(message.id, reaction.emoji)}>{reaction.emoji} <b>{reaction.count}</b></button>)}</div>}
+                {!message.deleted && <div className="message-actions"><button type="button" disabled={reactingMessageId !== null || deletingMessageId !== null} onClick={() => setReactionPickerId(reactionPickerId === message.id ? null : message.id)}>☺ Cảm xúc</button><button type="button" disabled={deletingMessageId !== null} onClick={() => { setReplyTo(message); setEmojiOpen(false); if (searchActive) clearSearch(); }}>↩ Trả lời</button>{canDelete && <button type="button" className="delete-message" disabled={deletingMessageId !== null} onClick={() => remove(message)}>{deletingMessageId === message.id ? 'Đang xóa...' : '🗑 Xóa'}</button>}</div>}
+                {reactionPickerId === message.id && <div className="reaction-picker">{['👍', '❤️', '😂', '😮', '😢', '🎉'].map((emoji) => <button type="button" disabled={reactingMessageId !== null} key={emoji} onClick={() => react(message.id, emoji)}>{emoji}</button>)}</div>}
               </div>
             </article>;
           })}

@@ -1,10 +1,4 @@
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
-let blockingRequestCount = 0;
-
-function publishBlockingRequestState() {
-  window.dispatchEvent(new CustomEvent('tea-api-busy', { detail: { pending: blockingRequestCount } }));
-}
-
 // In production, a reverse proxy can expose the API under the same domain as
 // the website. That path has no cross-origin request at all. For a separate
 // backend domain, set VITE_API_URL when building the frontend.
@@ -13,7 +7,9 @@ export const API_BASE_URL = (configuredApiUrl
   .replace(/\/$/, '');
 
 export async function api(path, options = {}) {
-  const { blocking = false, ...fetchOptions } = options;
+  // Keep this property compatible with existing callers, but never block the
+  // complete screen. Each action displays its own state directly on its button.
+  const { blocking: _blocking, ...fetchOptions } = options;
   const isFormData = fetchOptions.body instanceof FormData;
   const headers = { ...(fetchOptions.headers ?? {}) };
   const token = window.localStorage.getItem('tea-session-token');
@@ -21,19 +17,10 @@ export async function api(path, options = {}) {
   if (!isFormData && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
 
   let response;
-  if (blocking) {
-    blockingRequestCount += 1;
-    publishBlockingRequestState();
-  }
   try {
     response = await fetch(`${API_BASE_URL}${path}`, { ...fetchOptions, headers });
   } catch {
     throw new Error('Không thể kết nối tới máy chủ. Hãy kiểm tra backend đang chạy rồi thử lại.');
-  } finally {
-    if (blocking) {
-      blockingRequestCount = Math.max(0, blockingRequestCount - 1);
-      publishBlockingRequestState();
-    }
   }
   if (!response.ok) {
     const raw = await response.text().catch(() => '');
